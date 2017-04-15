@@ -1,0 +1,30 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*** SableVM Information about DEBUGGING ***
+
+DEBUGGING VERSION COMPILATION
+  --enable-debugging-features - add that option to ./configure call to get
+  switched interpreter with all possible checks and verbose options.
+  NOTE: This doesn't work with inlined engine (don't force inlined).
+  NOTE: Such JVM is much slower than normally.
+
+DEBUGGING PROPERTIES
+  sablevm.verbose.methods - when operating on a binary compiled with
+  debugging features - setting this property to true outputs names of
+  every method that is to be executed.
+
+  sablevm.verbose.instructions - when operating on a binary compiled
+  with debugging features - setting this property to  true  outputs
+  names of every instruction that is to be executed (WARNING: expect flood!!!)
+  NOTE: This requires "debugging features" enabled (See above).
+
+DEBUGGING METHODS
+  java.lang.Runtime.traceMethodCalls and java.lang.Runtime.traceInstructions
+  help getting smaller traces; you simply modify your program to call these
+  methods around the problem spots.

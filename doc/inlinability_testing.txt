@@ -1,0 +1,108 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*** SableVM Information about INLINABILITY TESTING for INLINED engine ***
+
+I. PREPARATION
+
+  1. See inlinability.list file. At best - open it in an editor thatsupports
+     "horizontal split" so that you could see two parts of thefile at the
+     same time.
+  2. Make the upper view short and scroll the content so that you sawthe name
+     of your architecture there. Now you should scroll the lowerview and see
+     that the arch name is indicating The Right Column(tm).
+  3. Clean up the column from old inlinability informations putting spaces
+     there.
+     WARNING: DO NOT EVER REMOVE "," chars! (use OVERWRITEmode in editor
+     if possible)
+  4. Save file (don't close editor - i'll be useful again).
+
+
+II. TESTING
+  5. Compile SableVM with these options: --enable-inlinability-testing
+     --with-threading=inlined --enable-signals-for-exceptions
+  6. Run BTF on SableVM [0]
+  7. The end-results will clearly indicate which bytecodes are failing.Put
+     " NOT," in The Right Column(tm) for each such bytecode. Save.
+  8. Compile SableVM omitting --enable-inlinability-testing option (or making
+     it --disable-*) and re-run BTF just to make sure...
+  9. Now come back to 5. but with --disable-signals-... and in this time use
+     " SIG," if it fails w/o signals but not with them. Go thru 6-8.
+
+
+III. FINALIZING
+
+  10. When your testing is done and SableVM works fine in inlined mode- now
+      you should:
+        a) make your inlinability.list public (DON'T use DIFF to show the
+	   changes in content - because of vertical orientation of arches
+	   - if you're sending it in an email - attach the file!)
+	b) in configure.ac - make your arch inlined by default
+	   case $host in
+	      alpha*-gnu)     with_threading=inlined ;;
+  11. Congratulations!
+
+
+IV. WHAT CAN GO WRONG AND ADVANCED TOPICS
+
+  Beware: inlinability depends on many factors, mainly on the compiler and
+    its version. If you get a new compiler version - yous hould probably
+    re-check inlinability to ensure robustness.
+
+  i. During the tests - SableVM has to deal with execution of random code
+    and/or segfaults... these are not reliable conditions for executions,
+    thus it might severly crash during tests and you won't see the nice table
+    with results. run '...|grep REGISTERING' on the output to get the list
+    of the bytecodes that are failing before crash and use these informations
+    to partially fill-in inlinability.list for your architecture. Re-compile
+    as previously and there are high chances that your testing will go further
+    or even till the "happy end".
+
+  ii. If you experience failures/exceptions on an instruction that is either
+    already marked as non-inlinable or is in the list of never-inlinable
+    instructions (at the bottom of inlinability.list) then there's some other
+    problem...
+
+  iii. If *a lot* ( > 20-40) of bytecodes fail and/or they fail randomly with
+    each run - it means that probably data/instruction cache flush function
+    is not working for this architecture.
+
+  iv. The architecture hasn't been yet ported at all... well... *before*
+    trying to get inlined engine running - you should get switched and direct
+    working.
+
+  v. Your classpath might be missing java/lang/InliningException.class and
+    you're getting 'sablevm: cannot create vm' errors (see strace output)[2]
+    This error also might happen for MANY MANY other reasons.
+
+  vi. If you compile w/ gcc older than 3.3 - then you might need to
+    --disable-no-reorder-blocks, especially w/ 2.95. Be warned that gcc3.2 on
+    some platforms generate many non-inlinable codes while not providing
+    options introduced in gcc 3.3 that fix it.
+
+  vii. BTF is also a regular testing suite, not only for inlinability. On
+    some arches you'll experience problems with ex. finite and infinite
+    divisions. You might want to stay w/ switched/direct engine while solving
+    these problems. They're however completly different story...
+
+  viii. There's currently at least one known BUG. When signals are OFF and
+    you get a signal not from failed inlining but because of some hardware
+    weirdness (like Intel when dividing Integer.MIN_VALUE / -1 ) you'll see
+    this bytecode listed as FAILING. THIS IS NOT TRUE. See the real output
+    above ( |less is helpful). Note that w/o testing mode and w/o signals
+    - this bytecode, even if not inlined - will break execution of BTF with
+    sth. like such message: "Floating point exception"
+
+
+V. LINKS AND OTHER NOTES
+
+  [1] Bytecode Testing Framework is available from Subversion repository as
+  sablevm-test-suite module. You might want to look at branches/staging
+  version of it. BTF which is included in this module - requires some quite
+  special utils for compilation, like jasmin (java assembler).
+

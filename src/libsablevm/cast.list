@@ -1,0 +1,55 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+----------------------------------------------------------------------
+head
+----------------------------------------------------------------------
+
+m4svm_file_name
+
+----------------------------------------------------------------------
+casts
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, destination_type, source_type
+
+m4svm_cast_begin[:
+
+CONSTANT_Class, _svmt_CONSTANT_Class_info *, _svmt_cp_info *
+CONSTANT_Double, _svmt_CONSTANT_Double_info *, _svmt_cp_info *
+CONSTANT_Fieldref, _svmt_CONSTANT_Fieldref_info *, _svmt_cp_info *
+CONSTANT_Float, _svmt_CONSTANT_Float_info *, _svmt_cp_info *
+CONSTANT_Integer, _svmt_CONSTANT_Integer_info *, _svmt_cp_info *
+CONSTANT_InterfaceMethodref, _svmt_CONSTANT_InterfaceMethodref_info *, _svmt_cp_info *
+CONSTANT_Long, _svmt_CONSTANT_Long_info *, _svmt_cp_info *
+CONSTANT_Methodref, _svmt_CONSTANT_Methodref_info *, _svmt_cp_info *
+CONSTANT_String, _svmt_CONSTANT_String_info *, _svmt_cp_info *
+ConstantValue, _svmt_ConstantValue_attribute *, _svmt_attribute_info *
+InnerClasses_attribute, _svmt_InnerClasses_attribute *, _svmt_attribute_info *
+LineNumberTable_attribute, _svmt_LineNumberTable_attribute *, _svmt_attribute_info *
+array, _svmt_array_info *, _svmt_type_info *
+class, _svmt_class_info *, _svmt_type_info *
+code_attribute, _svmt_Code_attribute *, _svmt_attribute_info *
+Exceptions_attribute, _svmt_Exceptions_attribute *, _svmt_attribute_info *
+SourceFile_attribute, _svmt_SourceFile_attribute *, _svmt_attribute_info *
+jarray, jarray, jobject
+jobject, jobject, jarray
+jobject_nref, jobject, _svmt_native_ref *
+nref_jobject, _svmt_native_ref *, jobject
+object_instance, _svmt_object_instance *, _svmt_array_instance *
+array_instance, _svmt_array_instance *, _svmt_object_instance *
+JavaVM, JavaVM *, _svmt_JavaVM *
+parray, _svmt_array_info **, _svmt_type_info **
+pclass, _svmt_class_info **, _svmt_type_info **
+type_array, _svmt_type_info *, _svmt_array_info *
+type_class, _svmt_type_info *, _svmt_class_info *
+svmt_JNIEnv, _svmt_JNIEnv *, JNIEnv *
+
+:]m4svm_cast_end

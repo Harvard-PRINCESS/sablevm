@@ -1,0 +1,533 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*** SableVM Java Stack Layout ***
+
+
+Introduction
+============ 
+
+This document describes the stack layout used by SableVM.  This is a 
+work in progress but is now mostly complete.  Comments are welcome. 
+Written by DBP and EMG, with some edits by CJFP. 
+
+
+To do:
+------
+- finish description of native method frame initialization 
+- provide some high-level examples of what the stack looks like: 
+    -- during vm startup 
+    -- when calling into native methods 
+    -- when calling from native methods into SableVM 
+
+General Info
+------------
+
+Note: In this document, when we simply use the word 'stack' we are
+      refering to the java execution stack.
+
+- each thread has its own stack
+- a thread's stack is accessible through the env pointer (env->stack)
+- the stack is contiguous
+- the stack may move in memory
+- the stack grows from a low address to a high address, but does not
+  shrink in current or past versions (r2150).
+
+High-Level View
+===============
+
+env->stack  The thread stack data structure.
+
+env->stack is of type _svmt_stack (defined in types.h):
+
+struct _svmt_stack_struct
+{
+  /* each thread has a single contiguous "Java stack", that can grow
+     (thus it can move around) */
+  void *start;
+  void *end;
+
+  _svmt_stack_frame *current_frame;
+};
+
+
+start: pointer to beginning of memory allocated for stack
+end:   pointer to the end
+current_frame: points to the beginning of an _svmt_stack_frame data
+               structure on the stack.  We will come back to this later.
+
+                    width is sizeof(_svmt_stack_value)
+                      (4 on Linux/x86, 8 on Linux/ppc, for example)
+                    +--------------------+
+env->stack.start -->|                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    |                    |
+                    +--------------------+
+env->stack.end   -->
+
+Note that stack.start points to the first element of the memory block
+allocated and stack.end points to the memory right after the stack block.
+
+
+Stack Initialization 
+-------------------- 
+The stack is created and initialized by 
+jint _svmf_stack_init (_svmt_JNIEnv *env) 
+defined in thread.c.
+
+The stack size is always a multiple of vm->stack_allocation_increment.
+
+The initial size is picked such that it is >= vm->stack_min_size, big
+enough to fit the initial frame and "aligned" on the increment size.
+If the size needed for the initial frame is >= vm->stack_max_size, it
+will result in an out of memory error.
+
+Allocating a Stack Frame
+------------------------
+Before allocating a new frame on the stack, a call to:
+static jint 
+_svmf_ensure_stack_capacity (_svmt_JNIEnv *env, size_t frame_size)
+is required.  This function is defined in thread.c.
+
+If not enough space is left on the stack, the stack memory will be
+reallocated.  The new size will be a multiple of the stack size
+increment.  Note that if the new size required is > stack_max_size,
+we get an out of memory error.
+
+The start, end, and current_frame pointers may be set to new
+values when this function returns.  In other words, the stack may
+have moved in memory.
+
+
+The Frame Struct
+----------------
+
+Each stack frame has a data structure _svmt_stack_frame.  It is not
+necessarily located either at the beginning or at the end of a stack
+frame.
+
+struct _svmt_stack_frame_struct
+{
+  size_t previous_offset;
+  size_t end_offset;
+  _svmt_method_info *method;
+  _svmt_object_instance *stack_trace_element;	/* cached element */
+  jint lock_count;		/* structured locking */
+  _svmt_object_instance *this;	/* for static methods, this points to
+				   the class instance */
+  _svmt_code *pc;
+  jint stack_size;
+};
+
+
+previous_offset: offset to get to the previous _svmt_stack_frame
+     end_offset: offset to get to the end of the frame.
+
+These are not absolute addresses (pointers) as the stack may move in
+memory due to reallocation.  Rather, all offsets are expressed as
+positive integers and are in number of bytes.
+
+SableVM has 3 types of method frames on a thread stack:
+- Normal Java method frame
+- Native method frame
+- Internal method frame
+
+Case 1: Normal Java Method Frame
+================================
+
+                      |                    |   *
+current_frame         +--------------------+   *
+- previous_offset --> |stack_frame_struct  |   *
+                      |                    |   *
+                      +--------------------+   *
+                      |                    |   *
+                      |                    |   *
+                      |                    |   * previous frame
+                      |                    |   *
+current_frame -       +--------------------+   *
+method->frame_info->  |local 0             | * *
+start_offset          |      1             | * *
+                      |      2             | * *__ last param
+                      |      ...           | * 
+                      |local n             | *
+env->stack.           +--------------------+ *
+current_frame   ----> | stack_frame_struct | *  current frame
+                      |                    | *
+                      |                    | *
+                      +--------------------+ *
+                      | padding to align   | *
+current_frame +       +--------------------+ *
+_svmv_stack_offset -> | expression stack   | *
+                      |                    | *
+                      |                    | *
+                      |                    | *
+                      |                    | *
+current_frame +       +--------------------+ *
+end_offset       ---> |                    |
+
+
+The previous frame and current frame overlap such that the method
+arguments pushed by the previous frame correspond to the first few
+locals of the current frame.
+
+env->stack.current_frame points to the _svmt_stack_frame
+data structure and it is usually not at the beginning of the stack
+frame, although it will be if the current method is called by
+an INVOKESTATIC that takes no arguments.  This is because only
+INVOKESTATIC's do not require an objectref on the stack.
+
+Values on the stack
+-------------------
+ 
+Locals and values on the expression stack are of type
+_svmt_stack_value (defined in types.h):
+
+union _svmt_stack_value_union
+{
+  jint jint;
+  jfloat jfloat;
+  _svmt_object_instance *reference;
+  _svmt_code *addr;
+  void *ptr;
+  char alignment[SVM_ALIGNMENT];
+};
+
+The alignment[] array forces the stack value to have an
+architecture-specific size.  The expression stack starts at an offset
+of _svmv_stack_offset (constant defined in thread.c):
+
+/* stack_offset */
+static const size_t _svmv_stack_offset =
+  (sizeof (_svmt_stack_frame) +
+   (SVM_ALIGNMENT - 1)) & ~((size_t) (SVM_ALIGNMENT - 1));
+
+Struct _svmt_method_frame_info
+------------------------------
+
+Contains information about the method as well as some info needed
+for stack frames.
+
+It is obtained from a method data structure: method->frame_info
+
+          start_offset: Offset from current_frame to get the first local.
+            end_offset: Used to set the _svmt_stack_frame end_offset.
+java_invoke_frame_size: Java frame size for that method
+
+struct _svmt_method_frame_info_struct
+{
+  /* The actual sablevm internal code array */
+  _svmt_code *code;
+
+  /* number of non-parameter reference local variables */
+  jint non_parameter_ref_locals_count;
+
+  size_t start_offset;
+  size_t end_offset;
+
+  size_t java_invoke_frame_size;
+  size_t internal_invoke_frame_size;
+};
+
+
+Summary
+-------
+
+    /* to get the current frame */
+    _svmt_stack_frame *frame = env->stack.current_frame;
+
+    /* to get the current method */
+    _svmt_method_info *method = frame->method;
+
+    /* to get a pointer to the beginning of locals */
+    locals =
+      (_svmt_stack_value *) (((char *) frame) -
+			     method->frame_info->start_offset);
+    /* to get a pointer to the beginning (bottom) of the expression stack */
+    stack =
+      (_svmt_stack_value *) (((char *) frame) + _svmv_stack_offset);
+
+
+Case 2: Native Method Frame
+===========================
+
+            +-------------+ 
+ params --> |             |    -- size of params is java_args_and_ret_count
+            |             |    -- the space is reserved for Java args
+            |             |       and the return value
+            |             | 
+            |-------------|
+   ptrs --> |&env	  |
+            |&lrefs[0]	  |
+            |		  |  ptrs[i] = &params[param] 
+            |             |    - if java arg is primitive
+            |		  |  
+	    |		  |  ptrs[i] = &lrefs[ref]
+            |             |    - if java arg is ref and non-NULL
+	    |             |  
+	    |		  |  ptrs[i] = &nullvar (pointer to var set to NULL)
+            |             |    - if java arg is ref and NULL
+            |             |
+            |-------------|
+  lrefs --> |jobject 0  -------->+----------+
+	    |             |      |native ref|
+	    |             |      +----------+
+            |		  |
+	    |		  |
+            |jobject lrefs_count - 1
+	    |lrefs_count  |
+            |lrefs_size   |
+            +-------------+
+                           <---- frame + frame_info->end_offset
+
+
+lrefs_count = nubmer of ref args + SVM_FRAME_NATIVE_REFS_MIN
+lrefs_size  = total space (in bytes) occupied by native refs and
+              lrefs_count and lrefs_size.
+
+
+array of _svmt_stack_native_reference_union
+
+union _svmt_stack_native_reference_union
+{
+  jint jint;       /* used for lrefs_count */
+  size_t size_t;   /* used for lrefs_size  */
+  jobject jobject; /* used for jobject     */
+};
+
+typedef struct _svmt_object_instance_struct **jobject;
+
+The jobjects on the stack are pointers to the ref in the following
+_svmt_native_ref struct.
+
+struct _svmt_native_ref_struct
+{
+  _svmt_object_instance *ref;
+  _svmt_native_ref *previous;
+  _svmt_native_ref *next;
+};
+
+
+Initialization
+--------------
+
+1. A new native local is obtained for each local native on the stack in
+   the lrefs array.  Free lists are maintained, and so it is not
+   always necessary to allocate new memory.
+
+TODO
+
+The return value will go in params[0].  A double or long return value
+may occupy both params[0]/params[1] slot.
+
+
+Case 3: Internal Method Frame
+=============================
+
+When JNI_CreateJavaVM is invoked (and for each new thread), an
+initial stack is created.  There are a couple of considerations:
+
+(a) It needs a bottom "method frame".  Since we are not yet executing
+any specific Java method, the frame needs to be of some non-Java frame
+type.  We really do need a frame as JNI calls need to work, and in
+particular local native reference must be allocatable.  In Case 2 we
+saw that local native references are stored on the stack.
+
+(b) However, we are not executing any specific "native" method, so the
+method frame cannot be of type "native method" either.  But it should
+be pretty similar, as we need native locals, etc.
+
+So, SableVM adds a third type of frame: Internal method frame.
+An internal method frame is identified by the SVM_ACC_INTERNAL
+access flag.  There are 3 subtypes of internal method frames:
+
+  (i) stack_bottom_method: The initial frame of the stack of a thread.
+
+ (ii) vm_initiated_call_method: Used by the VM when it calls a Java method
+      for itself (see below for motivation).
+
+(iii) internal_call_method: Used by the VM when executing JNI Call*
+      instructions.
+
+
+(i) stack_bottom_method
+-----------------------
+
+mostly self explanatory.  see (a) above.
+
+
+(ii) vm_initiated_call_method
+-----------------------------
+
+SableVM often calls Java methods for its own use.  A typical example of
+such a call is the invocation of static initializers.  A static
+initializer is never invoked directly from Java code, nor is it called
+from JNI library code.
+
+So, what's the problem?  Imagine the situation:  SableVM is executing
+some Java code and reaches a GETSTATIC instruction.  A potential side
+effect of executing such an instruction is the invocation of a static
+initializer ("<clinit>") before actually executing the real access
+to the static field.  Yet the current stack looks like this:
+
+                       |                    |
+current_frame -        +--------------------+
+method->frame_info->   |local 0             | *
+start_offset           |      1             | *
+                       |      2             | *
+                       |      ...           | *
+                       |local n             | *
+env->stack.            +--------------------+ *
+current_frame   ---->  | stack_frame_struct | *  current frame
+                       |                    | *
+                       |                    | *
+                       +--------------------+ *
+                       | padding to align   | *
+current_frame +        +--------------------+ *
+_svmv_stack_offset ->  | expression stack   | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+current_frame +        +--------------------+ *
+end_offset       --->  |                    |
+
+
+If we simply put the static initializer frame after this frame,
+and then invoke _svmf_interpreter() to start executing "<clinit>"
+the RETURN instruction of the static initializer will look for
+its previous frame and find the "current" frame, and discover
+that it simply is a normal Java method frame, so it will continue
+bytecode interpretation at current_frame->pc.  In other words,
+the called _svmf_interpreter() will continue executing code.
+
+                       |                    |
+                       +--------------------+
+                       |local 0             | *
+                       |      1             | *
+                       |      2             | *
+                       |      ...           | *
+                       |local n             | *
+                       +--------------------+ *
+                       | stack_frame_struct | *  current frame
+                       |                    | *
+                       |                    | *
+                       +--------------------+ *
+                       | padding to align   | *
+                       +--------------------+ *
+                       | expression stack   | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+                       +--------------------+ *
+                       |local 0             |   @
+                       |      1             |   @
+                       |      2             |   @
+                       |      ...           |   @
+                       |local n             |   @
+                       +--------------------+   @
+                       | stack_frame_struct |   @ static initializer frame
+                       |                    |   @
+                       |                    |   @
+                       +--------------------+   @
+                       | padding to align   |   @
+                       +--------------------+   @
+                       | expression stack   |   @
+                       |                    |   @
+                       |                    |   @
+                       |                    |   @
+                       |                    |   @
+                       +--------------------+   @
+
+
+However, we don't want normal execution to continue!  We want the
+actual call to _svmf_interpreter() to return so that we can resume
+execution of the GETSTATIC instruction.  One might try to make a more
+complex implementation of the RETURN bytecode that could somehow
+detect that the current method was at the bottom of the current
+invocation of _svmf_interpreter(), and would return to the previous
+invocation of _svmf_interpreter() instead of returning erroneously to
+the previous Java stack frame.
+
+Instead, SableVM uses a simpler strategy.  It inserts a "fake" method
+frame (i.e. internal method frame), which has a frame->pc pointing to
+a SableVM-specific INTERNAL_CALL_END instruction.
+
+  e.g.:
+
+                       |                    |
+                       +--------------------+
+                       |local 0             | *
+                       |      1             | *
+                       |      2             | *
+                       |      ...           | *
+                       |local n             | *
+                       +--------------------+ *
+                       | stack_frame_struct | *  current frame
+                       |                    | *
+                       |                    | *
+                       +--------------------+ *
+                       | padding to align   | *
+                       +--------------------+ *
+                       | expression stack   | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+                       |                    | *
+                       +--------------------+ *
+                       | stack_frame_struct |
+                       |(pc =               |
+                       | INTERNAL_CALL_END) |
+                       |                    |
+                       |                    |
+                       +--------------------+
+                       |local 0             |   @
+                       |      1             |   @
+                       |      2             |   @
+                       |      ...           |   @
+                       |local n             |   @
+                       +--------------------+   @
+                       | stack_frame_struct |   @ static initializer frame
+                       |                    |   @
+                       |                    |   @
+                       +--------------------+   @
+                       | padding to align   |   @
+                       +--------------------+   @
+                       | expression stack   |   @
+                       |                    |   @
+                       |                    |   @
+                       |                    |   @
+                       |                    |   @
+                       +--------------------+   @
+
+
+This way, when _svmf_interpreter() executes the static initializer's
+RETURN instruction, it simply continues execution at the previous
+frame's frame->pc instruction, which happens in this case to be an
+INTERNAL_CALL_END instruction.  As you can guess, INTERNAL_CALL_END's
+body first removes the internal frame, and then executes a C return
+statement that terminates the _svmf_interpreter() function call.
+
+(iii) internal_call_method
+--------------------------
+
+We use a different internal frame to distinguish between the
+"application call stack" (which includes Java methods and JNI
+functions), and the "vm-initiated" call stack.  It's the exact same
+idea as vm_initiated_call_method, but it is used when executing a JNI
+Call* function.  This is necessary for all sort of things like
+implementing SecurityManager.currentClassLoader() calls reliably.
+

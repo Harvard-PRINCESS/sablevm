@@ -1,0 +1,56 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*** Ideas about POSIX Compare & Swap ***
+
+NOTE: These ideas and code snippets have not been tested at all; not even
+  compiled. All such ugly (because almost surely slow) code (including the
+  two global mutexes) should NOT be compiled on an arch that has a better
+  implementation of these functions. => use #ifdef ...
+
+
+IDEA: We could write the POSIX-only CAS. It's ugly, from a performance point
+  of view. To be avoided at almost any cost. Useful for blind porting, quite
+  temporarily.
+
+  CAS implementation should look like:
+  1. get POSIX lock (maybe by spin-locking)
+  2. do comparison and potential swap operation (non-atomically, in plain C)
+  3. release POSIX lock
+  4. end of CAS.
+
+  pthread_mutex_t _svmv_dummy_compare_and_swap_mutex;
+  static inline jboolean
+  _svmh_compare_and_swap (volatile _svmt_word *pword, _svmt_word old_value,
+     _svmt_word new_value)
+  {
+    jboolean result;
+    _svmm_mutex_lock (_svmv_dummy_compare_and_swap_mutex);
+     if (*pword == old_value)
+       {
+         *pword = new_value;
+         result = 1;
+       }
+     else
+       {
+         result = 0;
+       }
+    _svmm_mutex_unlock ();
+    
+    return result;
+  }
+
+  Note:  You must initialize _svmv_dummy_compare_and_swap_mutex in lib_init.c
+  with the instruction:
+  _svmm_mutex_init (_svmv_dummy_compare_and_swap_mutex);
+
+  In fact, you should put this code in some _svmf_system_init() function
+  (within system.c), then call this function within
+  _svmf_internal_init() of lib_init.c
+  so as to follow the current convention for *one time* initializations.
+

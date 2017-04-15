@@ -1,0 +1,232 @@
+#!/bin/sh
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+# * This source file is part of SableVM.                            *
+# *                                                                 *
+# * See the file "LICENSE" for the copyright information and for    *
+# * the terms and conditions for copying, distribution and          *
+# * modification of this source file.                               *
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+JVM=SABLEVM_BINARY
+REST=
+OPTS=
+VER=-Y
+
+if [ $# -eq 0 ]; then
+  echo "You need to specify some parameters for java-sablevm wrapper."
+  echo "java-sablevm is parameter-compatible with 'java' command."
+  echo "Help option is not implemented yet. See 'man java-sablevm' for now."
+  exit 0
+fi
+
+# Timezone detection should be handled in Classpath, but used to be broken, so
+# we worked it around here.  Disabled for now, not yet removed.
+##if [ -r /etc/timezone ]; then
+##  ZONE_NAME=`cat /etc/timezone | sed 's/[ \t]*#/#/g' | grep -v '^#' | \
+##                grep -v '^[ \t]*$' | head -n 1 | awk '{ print $1 }'`
+##  if [ "X$ZONE_NAME" != "X" ]; then
+##    OPTS="-p user.timezone=${ZONE_NAME}"
+##  fi
+##fi
+
+if [ "$1" != "" ]; then OPTSDONE=0; else OPTSDONE=1; fi
+
+while [ $OPTSDONE -eq 0 ]
+ do
+  case "$1" in
+    -help|--help|-h|-\?|-X)
+      echo "Help option is not implemented yet. See 'man java-sablevm' for now."
+      exit 0
+    ;;
+    -debug|-Xdebug|--debug)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2
+    ;;
+    -version|--version|-V)
+      exec $JVM -V
+    ;;
+    -ss|-ms|-mx)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2
+      shift
+    ;;
+    -Xgnuclasspath:*)
+      # GNU Classpath *CVS* compatible mode
+      rest=${1#-Xgnuclasspath:}
+      value=${rest#*-Xgnuclasspath:}
+      # check existence of gnucp-override.jar
+      SVM_TOPDIR=`dirname $0`/..
+      if [ ! -e $SVM_TOPDIR/share/sablevm/gnucp-overrides.jar ]; then
+        echo "Error processing $1 directive.  Could not find gnucp-overrides.jar in:"
+        echo "$SVM_TOPDIR/share/sablevm/gnucp-overrides.jar"
+        echo "Try fetching one from http://sablevm.org/downloads/snapshots"
+        echo "or install classpath from SableVM-Classpath package."
+        exit 1
+      fi
+      # check existence of glibj.jar
+      if [ ! -e $value/share/classpath/glibj.zip ]; then
+        echo "Error processing $1 directive.  Could not find glibj.jar in:"
+        echo "$value/share/classpath/glibj.zip"
+        echo "Make sure path you gave is correct or install classpath from"
+        echo "SableVM-Classpath package.  See: http://sablevm.org/download"
+        exit 1
+      fi
+      # Setup things
+      SVM_LIBRARY_PATH="$SVM_LIBRARY_PATH:$value/lib/classpath"
+      OPTS="$OPTS -p sablevm.boot.class.path=$SVM_TOPDIR/share/sablevm/gnucp-overrides.jar:$value/share/classpath/glibj.zip"
+    ;;
+    -Xgnuclass*)
+      echo "The '$1' parameter not well formed.  The proper usage woul be ie."
+      echo "  -Xbootclasspath:/usr/local"
+      echo "so that /usr/local/share/classpath/glibj.zip existed."
+      echo "Also remember to fetch and install gnu-overrides.jar file from"
+      echo "http://sablevm.org/downloads/snapshots and put it into ie."
+      echo "\$prefix/share/sablevm, so that \$prefix/share/sablevm/gnucp-overrides.jar"
+      echo "existed."
+      exit 1
+    ;;
+    -Xbootclasspath/p:*)
+      rest=${1#-Xbootclasspath/p:}
+      value=${rest#*-Xbootclasspath/p:}
+      OPTS="$OPTS -p sablevm.boot.class.path.prepend=$value"
+    ;;
+    -Xbootclasspath/a:*)
+      rest=${1#-Xbootclasspath/a:}
+      value=${rest#*-Xbootclasspath/a:}
+      OPTS="$OPTS -p sablevm.boot.class.path.append=$value"
+    ;;
+    -Xbootclasspath:*)
+      rest=${1#-Xbootclasspath:}
+      value=${rest#*-Xbootclasspath:}
+      OPTS="$OPTS -p sablevm.boot.class.path=$value"
+    ;;
+    -X*)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2
+    ;;
+    -client|-server|-noclassgc|-noverify|--noverify)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2 ;;
+    -da|-disableassertions|-dsa|-disablesystemassertions)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2 ;;
+    -ea|-enableassertions|-esa|-enablesystemassertions)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2
+      echo "You can compile SableVM with --enable-debugging-features option instead." >&2
+    ;;
+    -classpath|--classpath|-cp|--cp)
+      CMD_CLASSPATH="$2"
+      shift
+    ;;
+    -classpath=*)
+      rest=${1#-classpath}
+      value=${rest#*=}
+      CMD_CLASSPATH="$value"
+    ;;
+    --classpath=*)
+      rest=${1#--classpath}
+      value=${rest#*=}
+      CMD_CLASSPATH="$value"
+    ;;
+    -addclasspath|--addclasspath)
+      if [ "X$CMD_CLASSPATH" = "X" ]; then
+        CMD_CLASSPATH="$2"
+      else
+	CMD_CLASSPATH="$CMD_CLASSPATH:$2"
+      fi
+      shift
+    ;;
+    -Djava.library.path=*)
+      # FIXME: we don't handle property names and values containing spaces and special chars
+      value=${1#-Djava.library.path=}
+      SVM_LIBRARY_PATH="$value:$SVM_LIBRARY_PATH"
+    ;;
+    -D*)
+      # FIXME: we don't handle property names and values containing spaces and special chars
+      rest=${1#-D}
+      value=${rest#*=}
+      key=${rest%%=$value}
+      #echo "rest='$rest' key='$key' value='$value'"
+      OPTS="$OPTS --property=${key}=${value}"
+    ;;
+    -jar|--jar)
+      JAR_CLASSPATH="$2"
+      CLASS=`unzip -p $2 META-INF/MANIFEST.MF|grep -i "Main-Class: "|tr -d \\\\r | awk '{ print $2 }'`
+      RES=$?
+      if [ $RES -ne 0 ]; then
+        echo "Error: Unable to uncompress $2"; exit 1;
+      fi
+      if [ "$CLASS" = "" ]; then
+        echo "Error: No MANIFEST.MF or Main-Class: in MANIFEST.MF found in $2"; exit 1;
+      fi
+      OPTS="$OPTS $CLASS"
+      # -jar is always the last option passed to java - the rest is being
+      # passed to executed program (main method)
+      OPTSDONE=1
+      shift
+      shift
+    ;;
+    -v|-verbose|--verbose)
+      OPTS="$OPTS -v"
+    ;;
+    -verbose-gc|--verbose-gc)
+      OPTS="$OPTS -g"
+    ;;
+    -verbose*jni)
+      OPTS="$OPTS -j"
+    ;;
+    -verbosemem|-verbosejit|-verbose*)
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2 ;;
+    -showversion|--showversion)
+      VER=
+    ;;
+    -vmdebug)
+      shift # a string of comma-separated flags follows -vmdebug
+      echo "Warning: $1 option not implemented in java-sablevm wrapper." >&2
+      echo "You can compile SableVM with --enable-debugging-features option instead." >&2
+    ;;
+    -*)
+      echo "Warning: $1 option NOT RECOGNIZED by java-sablevm." >&2
+      echo "A not recognized option will be just passed to SableVM." >&2
+      echo "Note that we don't know if we should expect an argument after it." >&2
+      echo "It almost _surely_ will result in an errors when the param is followed" >&2
+      echo "by an argument. Refer to 'man java-sablevm' and 'man sablevm'." >&2
+      REST="$REST $1"
+    ;;
+    --)
+      OPTSDONE=1
+    ;;
+    *)
+      OPTSDONE=1
+    ;;
+  esac
+  if [ $OPTSDONE -ne 1 ]; then shift; fi
+done
+
+# setting -jar or -classpath nullfies CLASSPATH env var
+if [ "X$JAR_CLASSPATH" != "X" ]; then
+  if [ "X$CMD_CLASSPATH" != "X" ]; then
+    CLASSPATH="$JAR_CLASSPATH:$CMD_CLASSPATH"
+  else
+    CLASSPATH="$JAR_CLASSPATH"
+  fi
+else
+  if [ "X$CMD_CLASSPATH" != "X" ]; then
+    CLASSPATH="$CMD_CLASSPATH"
+  else
+    if [ "X$CLASSPATH" = "X" ]; then
+      CLASSPATH="."
+    fi
+  fi
+fi  
+
+OPTS="--classpath=$CLASSPATH $OPTS"
+# this is so that jikes worked w/o problems, i.e. when called by Ant
+BOOTCLASSPATH="SABLEVM_CLASSDIR:SABLEVM_CLASSDIR/libclasspath.jar:SABLEVM_CLASSDIR/resources.jar"
+
+if [ "X$LD_LIBRARY_PATH" != "X" -o "X$SVM_LIBRARY_PATH" != "X" ]; then
+  OPTS="-p java.library.path=$SVM_LIBRARY_PATH:$LD_LIBRARY_PATH:/usr/lib $OPTS"
+fi
+
+export CLASSPATH BOOTCLASSPATH
+
+#echo $JVM $VER $OPTS $REST "$@"
+exec $JVM $VER $OPTS $REST "$@"
+
+echo "Error: unable to execute $JVM." >&2
+exit 1

@@ -1,0 +1,68 @@
+SableVM THANKS file.
+
+SableVM has been initially developed by Etienne M. Gagnon as his
+Ph.D. research project, and as a project of the Sable research group
+of McGill University.
+
+Etienne is now working as an assistant professor at UQAM, where he
+continues to further develop the SableVM project in collaboration with
+the McGill-UQAM Sable research group.
+
+Many people have contributed to SableVM by reporting problems,
+suggesting various improvements or providing other services.  Here is
+a list of these people and organizations.  Please help us keep it
+complete and exempt of errors.
+
+Thanks to you
+-------------
+
+* Generous research grant and equipment grant from NATEQ.
+  http://www.nateq.gouv.qc.ca/
+
+* Generous individual research grant and equipment grant from NSERC.
+  http://www.nserc.ca/
+
+* Generous anonymous donation to finance part of Grzegorz Prokopski's
+  attendance to FOSDEM 2004 (http://www.fosdem.org/) in Brussels.
+
+* Latece (http://www.latece.uqam.ca/):
+    research environment.
+
+* Canada Foundation for Innovation (CFI)
+    Grant from the New Opportunities Fund program.
+
+* PAFARC (UQAM)
+    Generous research grant.
+
+* Prof. Laurie J. Hendren <hendren@sable.mcgill.ca>
+    research advisor.
+
+* Sable McGill Research Group (http://www.sable.mcgill.ca/)
+    research environment.
+
+* FCAR
+    Ph.D. Fellowship to Etienne M. Gagnon.
+
+* Hydro-Quebec/Mcgill
+    Reserved Ph.D. Fellowship to Etienne M. Gagnon.
+
+* NSERC
+    Research grant to Laurie J. Hendren, funding the Sable research
+    group.
+
+* Richard M. Stallman <rms@gnu.org>:
+    Discussion of license terms.
+
+* GNU Classpath Project
+    For providing class/native libraries, and fixing license term
+    ambiguities.
+
+* Paul Fisher <rao@gnu.org> <pnfisher@redhat.com>:
+    Discussions about libraries, licensing, etc.
+
+* SourceForge  (http://www.sourceforge.net/)
+    web hosting
+
+* J-Meg inc.
+    financial support, domain name, development environment,
+    books, computer, Internet bandwidth, and much more...

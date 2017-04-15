@@ -1,0 +1,127 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+----------------------------------------------------------------------
+head
+----------------------------------------------------------------------
+
+m4svm_file_name
+m4svm_file_head
+
+----------------------------------------------------------------------
+global zeroed allocation (no exception)
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_global_zalloc_no_exception_begin[:
+
+env, _svmt_JNIEnv
+fat_lock, _svmt_fat_lock
+initialization, _svmt_initialization
+native_ref, _svmt_native_ref
+vm, _svmt_JavaVM
+
+:]m4svm_global_zalloc_no_exception_end
+
+----------------------------------------------------------------------
+global zeroed multiple allocation (no exception)
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_global_zmalloc_no_exception_begin[:
+
+cchars, char
+
+:]m4svm_global_zmalloc_no_exception_end
+
+----------------------------------------------------------------------
+global zeroed allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_global_zalloc_begin[:
+
+class_loader_info, _svmt_class_loader_info
+gc_map_node, _svmt_gc_map_node
+imethod_signature_node, _svmt_imethod_signature_node
+memory_block, _svmt_memory_block
+type_node, _svmt_type_node
+internal_method_node, _svmt_internal_method_node
+zip_file, _svmt_zip_file
+
+:]m4svm_global_zalloc_end
+
+
+m4svm_on(0)
+#if defined (_SABLEVM_INLINED_THREADED_INTERPRETER)
+m4svm_off()
+
+m4svm_global_zalloc_begin[:
+
+sequence_node, _svmt_sequence_node
+
+:]m4svm_global_zalloc_end
+
+m4svm_on(0)
+#endif /* _SABLEVM_INLINED_THREADED_INTERPRETER */
+m4svm_off()
+
+
+----------------------------------------------------------------------
+global multiple allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_global_malloc_begin[:
+
+cchars, char
+ints, jint
+ubytes, _svmt_u8
+chars, jchar
+
+:]m4svm_global_malloc_end
+
+----------------------------------------------------------------------
+global zeroed multiple allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_global_zmalloc_begin[:
+
+env_array, _svmt_JNIEnv *
+fat_lock_array, _svmt_fat_lock *
+instruction_info, _svmt_instruction_info
+instruction_preparation, _svmt_instruction_preparation
+local_preparation, _svmt_local_preparation
+ubytes, _svmt_u8
+boot_class_path_entry, _svmt_boot_class_path_entry
+zip_file_entry, _svmt_zip_file_entry
+
+:]m4svm_global_zmalloc_end
+
+
+----------------------------------------------------------------------
+tail
+----------------------------------------------------------------------
+
+m4svm_file_tail

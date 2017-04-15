@@ -1,0 +1,66 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+This file contains list of fast versions of two-modes instructions.
+
+----------------------------------------------------------------------
+m4svm_two_modes_fast
+----------------------------------------------------------------------
+
+m4svm_multicall(m4svm_two_modes_fast)
+
+m4_define(m4svm_two_modes_fast,
+[:m4_define(m4svm_two_modes_fast_$1,[:$1:]):])
+
+m4svm_two_modes_fast_begin[:
+
+LDC_STRING
+
+GETFIELD_BYTE
+GETFIELD_SHORT
+GETFIELD_CHAR
+GETFIELD_INT
+GETFIELD_LONG
+GETFIELD_FLOAT
+GETFIELD_DOUBLE
+GETFIELD_REFERENCE
+
+PUTFIELD_BYTE
+PUTFIELD_SHORT
+PUTFIELD_CHAR
+PUTFIELD_INT
+PUTFIELD_LONG
+PUTFIELD_FLOAT
+PUTFIELD_DOUBLE
+PUTFIELD_REFERENCE
+
+GETSTATIC_BOOLEAN
+GETSTATIC_BYTE
+GETSTATIC_SHORT
+GETSTATIC_CHAR
+GETSTATIC_INT
+GETSTATIC_LONG
+GETSTATIC_FLOAT
+GETSTATIC_DOUBLE
+
+PUTSTATIC_BOOLEAN
+PUTSTATIC_BYTE
+PUTSTATIC_SHORT
+PUTSTATIC_CHAR
+PUTSTATIC_INT
+PUTSTATIC_LONG
+PUTSTATIC_FLOAT
+PUTSTATIC_DOUBLE
+
+GETFIELD_BOOLEAN
+PUTFIELD_BOOLEAN
+GETSTATIC_REFERENCE
+PUTSTATIC_REFERENCE
+
+:]m4svm_two_modes_fast_end
+

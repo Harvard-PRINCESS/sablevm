@@ -1,0 +1,157 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+----------------------------------------------------------------------
+head
+----------------------------------------------------------------------
+
+m4svm_file_name
+m4svm_file_head
+
+----------------------------------------------------------------------
+nonvirtual methods
+----------------------------------------------------------------------
+
+Here is the list of nonvirtual methods.  Each line has the format:
+
+method_name, return_type[, arg_type]*
+
+
+m4svm_invoke_nonvirtual_begin[:
+
+jlclass_init, void, jobject, jobject
+jlclass_init_primitive, void, jint
+jlclass_initialize, void, jint
+jlrconstructor_init, void, jobject
+jlrfield_init, void, jobject
+jlrinvocationtargetexception_init, void, jobject
+jlrmethod_init, void, jobject
+jlstacktraceelement_init, void, jobject, jint, jobject, jobject, jint
+
+ArithmeticException_init, void, jobject
+ArrayIndexOutOfBoundsException_init, void, jobject
+ArrayStoreException_init, void, jobject
+ClassCastException_init, void, jobject
+IllegalMonitorStateException_init, void, jobject
+NegativeArraySizeException_init, void, jobject
+NoSuchFieldException_init, void, jobject
+NoSuchMethodException_init, void, jobject
+NullPointerException_init, void, jobject
+InterruptedException_init, void, jobject
+
+InliningException_init, void, jobject
+
+AbstractMethodError_init, void, jobject
+ClassCircularityError_init, void, jobject
+ClassFormatError_init, void, jobject
+ExceptionInInitializerError_init, void, jobject
+IncompatibleClassChangeError_init, void, jobject
+InternalError_init, void, jobject
+LinkageError_init, void, jobject
+NoClassDefFoundError_init, void, jobject
+NoSuchFieldError_init, void, jobject
+NoSuchMethodError_init, void, jobject
+OutOfMemoryError_init, void, jobject
+UnsatisfiedLinkError_init, void, jobject
+UnsupportedClassVersionError_init, void, jobject
+VerifyError_init, void, jobject
+
+:]m4svm_invoke_nonvirtual_end
+
+----------------------------------------------------------------------
+specific nonvirtual methods
+----------------------------------------------------------------------
+
+Here is the list of specific nonvirtual methods.  Each line has the format:
+
+method_name, return_type[, arg_type]*
+
+
+m4svm_invoke_specific_nonvirtual_begin[:
+
+throwinit, void, jobject
+
+:]m4svm_invoke_specific_nonvirtual_end
+
+----------------------------------------------------------------------
+static methods
+----------------------------------------------------------------------
+
+Here is the list of static methods.  Each line has the format:
+
+method_name, return_type[, arg_type]*
+
+
+m4svm_invoke_static_begin[:
+
+stringcreator_createinternedstring, jobject, jobject
+stringcreator_createstring, jobject, jobject
+stringcreator_createstringfromchars, jobject, jobject
+stringcreator_getchars, jobject, jobject
+stringcreator_getlength, jint, jobject
+stringcreator_getutfchars, jobject, jobject
+stringcreator_getutflength, jint, jobject
+virtualmachine_createarray, jobject, jobject, jobject
+virtualmachine_createclass, jobject, jobject, jobject
+virtualmachine_createrootthread, jobject, jobject
+virtualmachine_exceptiondescribe, void, jobject
+virtualmachine_exceptiondescription, jobject, jobject
+virtualmachine_exceptiontruncateddescription, jobject, jobject
+virtualmachine_getsystemcl, jobject
+virtualmachine_runthread, void
+niobytebuffervm_getcapacity, jlong, jobject
+
+:]m4svm_invoke_static_end
+
+m4svm_on(0)
+#if SVM_WORD_BIT_COUNT == 32
+m4svm_off()
+
+m4svm_invoke_static_begin[:
+
+niobytebuffervm_newbuffer32, jobject, jint, jlong
+niobytebuffervm_getaddress32, jint, jobject
+
+:]m4svm_invoke_static_end
+
+m4svm_on(0)
+#elif SVM_WORD_BIT_COUNT == 64
+m4svm_off()
+
+m4svm_invoke_static_begin[:
+
+niobytebuffervm_newbuffer64, jobject, jlong, jlong
+niobytebuffervm_getaddress64, jlong, jobject
+
+:]m4svm_invoke_static_end
+
+m4svm_on(0)
+#endif
+m4svm_off()
+
+----------------------------------------------------------------------
+specific static methods
+----------------------------------------------------------------------
+
+Here is the list of specific static methods.  Each line has the format:
+
+method_name, return_type[, arg_type]*
+
+
+m4svm_invoke_specific_static_begin[:
+
+clinit, void
+main, void, jobject
+
+:]m4svm_invoke_specific_static_end
+
+----------------------------------------------------------------------
+tail
+----------------------------------------------------------------------
+
+m4svm_file_tail

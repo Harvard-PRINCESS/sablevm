@@ -1,0 +1,26 @@
+/* This file has been automatically generated from "error.list" */
+  unsigned in_ArithmeticException:1;
+  unsigned in_ArrayIndexOutOfBoundsException:1;
+  unsigned in_ArrayStoreException:1;
+  unsigned in_ClassCastException:1;
+  unsigned in_IllegalMonitorStateException:1;
+  unsigned in_NegativeArraySizeException:1;
+  unsigned in_NoSuchFieldException:1;
+  unsigned in_NoSuchMethodException:1;
+  unsigned in_NullPointerException:1;
+  unsigned in_InterruptedException:1;
+  unsigned in_InliningException:1;
+  unsigned in_AbstractMethodError:1;
+  unsigned in_ClassCircularityError:1;
+  unsigned in_ClassFormatError:1;
+  unsigned in_ExceptionInInitializerError:1;
+  unsigned in_IncompatibleClassChangeError:1;
+  unsigned in_InternalError:1;
+  unsigned in_LinkageError:1;
+  unsigned in_NoClassDefFoundError:1;
+  unsigned in_NoSuchFieldError:1;
+  unsigned in_NoSuchMethodError:1;
+  unsigned in_OutOfMemoryError:1;
+  unsigned in_UnsatisfiedLinkError:1;
+  unsigned in_UnsupportedClassVersionError:1;
+  unsigned in_VerifyError:1;

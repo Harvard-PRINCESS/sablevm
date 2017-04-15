@@ -1,0 +1,65 @@
+
+>>>>> S a b l e V M   t e s t i n g   i n s t r u c t i o n <<<<<
+>>>>>    H T T P : / / D E V E L . S A B L E V M . O R G    <<<<<
+
+WARNING: THIS IS MAINLY FOR *DEVELOPMENT* VERSIONS AND SNAPSHOTS
+
+NEWS and CHANGES:
+ * SableVM Classpath is based on GNU Classpath 0.08 + further CVS changes ! ! !
+ * GTK-peers (AWT implementation) are starting to work even more
+ * Swing(!) is starting to work somewhat!
+ * Includes a few fairly small but important bugfixes.
+ * SableVM Classpath now "simply builds" like any other software
+
+WHAT WE WANT YOU TO DO WITH THIS RELEASE:
+ * Compile & try!
+ * Report problems to the mailing list
+ * Run your favourite apps, tests and report experiences
+ * Try to help us fixing the problems
+
+GETTING CODE:
+ * If you're reading this text from a source tar archive, you may skip this part.
+ * You can always checkout code from Subversion repository, ex. to get "trunk"
+   versions of SableVM and SableVM Classpath use:
+	svn co svn://svn.sablevm.org/sablevm/trunk sablevm
+	svn co svn://svn.sablevm.org/sablevm-classpath/trunk sablevm-classpath
+ * You can grab development snapshot from http://devel.sablevm.org/shot ex.
+   sablevm-trunk*.tar.gz sablevm-classpath-trunk*.tar.gz for "trunk"
+   versions of SableVM and SableVM Classpath
+   NOTE: Subversion is not required to compile snapshots of Subversion repository.
+
+INSTALLATION OF SABLEVM-CLASSPATH:
+ * requirements
+   - automake version 1.6 or 1.7 (NOT 1.4)
+   - libtool 1.4 or 1.5
+   - autoconf  (min. ver. 2.59!)
+   - java compiler  (ex. jikes)
+   - libgtk2.0-dev  (ver. 2.2.x)
+   - libart-2.0-dev (ver. 2.2.x)
+   - pkg-config (ex. ver. 0.15)
+   (note: the package names above are for Debian; they may differ in your
+   distribution).
+ * build procedure:
+	[ ./autogen.sh ] (only needed for SVN version, NOT for stable/devel releases)
+	./configure [ --prefix=/special/location/you/want ]
+	make
+	make install
+
+INSTALLATION OF SABLEVM:
+ * requirements
+   - libffi2-dev
+   - libtool
+   - libltdl3-dev
+   - libpopt-dev
+   - zlib
+ * build procedure:
+	[ ./autogen.sh ] (only needed for SVN version, NOT for stable/devel releases)
+	./configure [ --prefix=/special/location/you/want ]
+	make
+	make install
+
+FURTHER INFORMATIONS AND CONTACT:
+ * See our website for informations http://www.sablevm.org
+ * See our development site http://devel.sablevm.org
+ * See our mailing lists http://devel.sablevm.org/wiki/MailingLists
+ * Meet us on IRC in #sablevm channel in irc.sablevm.org (openprojects/debian)

@@ -1,0 +1,26 @@
+/* This file has been automatically generated from "error.list" */
+  _svmt_class_info *ArithmeticException;
+  _svmt_class_info *ArrayIndexOutOfBoundsException;
+  _svmt_class_info *ArrayStoreException;
+  _svmt_class_info *ClassCastException;
+  _svmt_class_info *IllegalMonitorStateException;
+  _svmt_class_info *NegativeArraySizeException;
+  _svmt_class_info *NoSuchFieldException;
+  _svmt_class_info *NoSuchMethodException;
+  _svmt_class_info *NullPointerException;
+  _svmt_class_info *InterruptedException;
+  _svmt_class_info *InliningException;
+  _svmt_class_info *AbstractMethodError;
+  _svmt_class_info *ClassCircularityError;
+  _svmt_class_info *ClassFormatError;
+  _svmt_class_info *ExceptionInInitializerError;
+  _svmt_class_info *IncompatibleClassChangeError;
+  _svmt_class_info *InternalError;
+  _svmt_class_info *LinkageError;
+  _svmt_class_info *NoClassDefFoundError;
+  _svmt_class_info *NoSuchFieldError;
+  _svmt_class_info *NoSuchMethodError;
+  _svmt_class_info *OutOfMemoryError;
+  _svmt_class_info *UnsatisfiedLinkError;
+  _svmt_class_info *UnsupportedClassVersionError;
+  _svmt_class_info *VerifyError;

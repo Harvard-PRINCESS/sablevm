@@ -1,0 +1,54 @@
+Welcome to SableVM!
+
+
+Project Description
+-------------------
+
+SableVM is a portable bytecode interpreter written in C, and
+implementing the Java virtual machine specification, second
+edition. Its goals are to be reasonably small, fast, and efficient, as
+well as providing a well-designed and robust platform for conducting
+research.
+
+You are welcome to install, test, and report back your comments,
+suggestion, and bug reports using the different features
+(mailing-list, bug tracking software, etc.) found on the
+http://www.sablevm.org/ web site and its related
+http://sourceforge.net/projects/sablevm/ SourceForge project page.
+
+
+Installation
+------------
+
+Please carefully read the installation instructions in the INSTALL
+file.
+
+Note that the usual "./configure ; make install" is not sufficient to
+get SableVM to work, unless you already have downloaded and installed
+the class and native libraries.  The typical symptom of missing
+libraries is the error message "could not create vm".
+
+
+Joining
+-------
+
+You are welcome to join the project as a developer, as long as you
+have maintained a "clean-room" status.  In simpler terms, you should
+not have had access to confidential material under license terms that
+precludes contributing to the development of SableVM.  [Having signed
+the Sun community source license or any similar non-disclusure
+agreement, for example, would be such a situation].
+
+
+Additional Information
+----------------------
+
+You will find more information about this version of SableVM in the
+NEWS file.
+
+Please carefully read the Copyright notice and license terms in the
+file LICENSE, and do not forget to read the names of all authors and
+copyright holders in the AUTHORS file.
+
+
+Enjoy!

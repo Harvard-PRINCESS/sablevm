@@ -1,0 +1,25 @@
+#!/bin/sh
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+# * This source file is part of SableVM.                            *
+# *                                                                 *
+# * See the file "LICENSE" for the copyright information and for    *
+# * the terms and conditions for copying, distribution and          *
+# * modification of this source file.                               *
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+FASTJAR=FASTJAR_BINARY
+
+if [ ! -x "$FASTJAR" -o ! -f "$FASTJAR" ]; then
+  FASTJAR=`which fastjar`
+fi
+
+if [ "X$FASTJAR" = "X" ]; then
+  echo "Error; unable to find 'fastjar' utility.  Make sure it is installed" >&2
+  echo "and reachable via 'fastjar' command (check your PATH settings)." >&2
+  exit 1
+fi
+
+exec $FASTJAR "$@"
+
+echo "Error: unable to execute ${JAR}." >&2
+exit 1

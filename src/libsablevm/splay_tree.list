@@ -1,0 +1,45 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+----------------------------------------------------------------------
+head
+----------------------------------------------------------------------
+
+m4svm_file_name
+
+----------------------------------------------------------------------
+splay trees
+----------------------------------------------------------------------
+
+Each line has the format:
+
+tree_name, node_type_name
+
+m4svm_splay_tree_begin[:
+
+type, _svmt_type_node
+gc_map, _svmt_gc_map_node
+imethod_signature, _svmt_imethod_signature_node
+internal_method, _svmt_internal_method_node
+
+:]m4svm_splay_tree_end
+
+
+m4svm_on(0)
+#if defined (_SABLEVM_INLINED_THREADED_INTERPRETER)
+m4svm_off()
+
+m4svm_splay_tree_begin[:
+
+sequence, _svmt_sequence_node
+
+:]m4svm_splay_tree_end
+
+m4svm_on(0)
+#endif /* _SABLEVM_INLINED_THREADED_INTERPRETER */
+m4svm_off()

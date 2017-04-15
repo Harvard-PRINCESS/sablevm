@@ -1,0 +1,26 @@
+/* This file has been automatically generated from "error.list" */
+  jobject default_ArithmeticException;
+  jobject default_ArrayIndexOutOfBoundsException;
+  jobject default_ArrayStoreException;
+  jobject default_ClassCastException;
+  jobject default_IllegalMonitorStateException;
+  jobject default_NegativeArraySizeException;
+  jobject default_NoSuchFieldException;
+  jobject default_NoSuchMethodException;
+  jobject default_NullPointerException;
+  jobject default_InterruptedException;
+  jobject default_InliningException;
+  jobject default_AbstractMethodError;
+  jobject default_ClassCircularityError;
+  jobject default_ClassFormatError;
+  jobject default_ExceptionInInitializerError;
+  jobject default_IncompatibleClassChangeError;
+  jobject default_InternalError;
+  jobject default_LinkageError;
+  jobject default_NoClassDefFoundError;
+  jobject default_NoSuchFieldError;
+  jobject default_NoSuchMethodError;
+  jobject default_OutOfMemoryError;
+  jobject default_UnsatisfiedLinkError;
+  jobject default_UnsupportedClassVersionError;
+  jobject default_VerifyError;

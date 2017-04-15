@@ -1,0 +1,26 @@
+/* This file has been automatically generated from "error.list" */
+  _svmt_method_info *ArithmeticException_init;
+  _svmt_method_info *ArrayIndexOutOfBoundsException_init;
+  _svmt_method_info *ArrayStoreException_init;
+  _svmt_method_info *ClassCastException_init;
+  _svmt_method_info *IllegalMonitorStateException_init;
+  _svmt_method_info *NegativeArraySizeException_init;
+  _svmt_method_info *NoSuchFieldException_init;
+  _svmt_method_info *NoSuchMethodException_init;
+  _svmt_method_info *NullPointerException_init;
+  _svmt_method_info *InterruptedException_init;
+  _svmt_method_info *InliningException_init;
+  _svmt_method_info *AbstractMethodError_init;
+  _svmt_method_info *ClassCircularityError_init;
+  _svmt_method_info *ClassFormatError_init;
+  _svmt_method_info *ExceptionInInitializerError_init;
+  _svmt_method_info *IncompatibleClassChangeError_init;
+  _svmt_method_info *InternalError_init;
+  _svmt_method_info *LinkageError_init;
+  _svmt_method_info *NoClassDefFoundError_init;
+  _svmt_method_info *NoSuchFieldError_init;
+  _svmt_method_info *NoSuchMethodError_init;
+  _svmt_method_info *OutOfMemoryError_init;
+  _svmt_method_info *UnsatisfiedLinkError_init;
+  _svmt_method_info *UnsupportedClassVersionError_init;
+  _svmt_method_info *VerifyError_init;

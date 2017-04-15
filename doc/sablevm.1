@@ -1,0 +1,162 @@
+./ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+./ * This source file is part of SableVM.                            *
+./ *                                                                 *
+./ * See the file "LICENSE" for the copyright information and for    *
+./ * the terms and conditions for copying, distribution and          *
+./ * modification of this source file.                               *
+./ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.TH SABLEVM "1" "January 2005" "SableVM version 1.13" "User Commands"
+.SH NAME
+SableVM \- manual page for SableVM - free (LGPL) Java Virtual Machine
+.SH SYNOPSIS
+.B sablevm
+[\fIOPTION\fR]... \fICLASSNAME \fR[\fIARGUMENT\fR]...
+.SH DESCRIPTION
+\fINOTE:\fR
+.B sablevm
+command is NOT command-line compatible with the
+.B java
+command.  The
+.B sablevm
+command uses GNU style of parameters, and ignores the environmental variables
+often used by Java programs, like CLASSPATH.  If this is not what you want
+you should look at
+.B java-sablevm
+command which is meant to be command-line compatible with the
+.B java
+command.
+.TP
+\fB\-c\fR, \fB\-\-classpath=\fR"PATH"
+set class path
+.TP
+\fB\-p\fR, \fB\-\-property=\fR"NAME=VALUE"
+set system property
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+enable all verbose options
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+disable all verbose options
+.TP
+\fB\-s\fR, \fB\-\-verbose\-class\fR
+enable verbose class loading
+.TP
+\fB\-S\fR, \fB\-\-no\-verbose\-class\fR
+disable verbose class loading
+.TP
+\fB\-g\fR, \fB\-\-verbose\-gc\fR
+enable verbose garbage collection
+.TP
+\fB\-G\fR, \fB\-\-no\-verbose\-gc\fR
+disable verbose garbage collection
+.TP
+\fB\-j\fR, \fB\-\-verbose\-jni\fR
+enable verbose JNI
+.TP
+\fB\-J\fR, \fB\-\-no\-verbose\-jni\fR
+disable verbose JNI
+.TP
+\fB\-y\fR, \fB\-\-copyright\fR
+display copyright
+.TP
+\fB\-Y\fR, \fB\-\-no\-copyright\fR
+do not display copyright
+.TP
+\fB\-L\fR, \fB\-\-license\fR
+display license information and exit
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+display version information and exit
+.SS "Help options:"
+.TP
+-?, \fB\-\-help\fR
+Show this help message
+.TP
+\fB\-\-usage\fR
+Display brief usage message
+
+.SH AUXILIARY PROPERTIES
+It is possible to place multiple elements on boot classpath. Each element may
+be either a top directory of class tree or a .jar (or zip) file.  SableVM
+offers flexible setup of boot class path thru usage of the following properties.
+.TP
+\fBsablevm.boot.class.path\fR
+changes boot classpath
+.TP
+\fBsablevm.boot.class.path.prepend\fR
+prepends entries to default or set boot classpath
+.TP
+\fBsablevm.boot.class.path.append\fR
+appends entries to default or set boot classpath
+.TP
+\fBsablevm.boot.library.path\fR
+changes native libraries patch which are used by boot classpath
+.TP
+(WARNING: the two last properties above are very fragile; expect
+\fIcannot create vm\fR messages if you use them in a wrong way.
+
+.SH MEMORY USAGE CONTROL PROPERTIES
+There exist a number of properties that can be used to tune memory usage of SableVM. \
+Normally it is NOT needed to use any of them, as SableVM will take care of \
+allocating as much memory, as your application needs and of freeing the memory \
+when it is not needed anymore. Still, there are some situations when you want to \
+tune or limit maximum memory usage.
+
+The general pattern of available memory controlling properties is:
+
+\fBsablevm.[stack,classloader.heap].size.[min,max,increment]\fR
+
+which tranlates into the following set of available properties:
+.TP
+\fBsablevm.stack.size.min\fR
+.TP
+\fBsablevm.stack.size.max\fR
+.TP
+\fBsablevm.stack.size.increment\fR
+.TP
+\fBsablevm.heap.size.min\fR
+.TP
+\fBsablevm.heap.size.max\fR
+.TP
+\fBsablevm.heap.size.increment\fR
+.TP
+\fBsablevm.classloader.size.min\fR
+.TP
+\fBsablevm.classloader.size.max\fR
+.TP
+\fBsablevm.classloader.size.increment\fR
+
+These properties allow for control over \fR\fIjava stack\fR, \fR\fIjava heap\fR, and \fR\fIjava class loader\fR.
+
+Meaning of the \fR\fImin\fR, \fR\fImax\fR, \fR\fIincrement\fR suffixes is the following:
+
+\fB...min\fR initial size in bytes,
+
+\fB...max\fR maximal size in bytes (hard limit); 0 means "no limit",
+
+\fB...increment\fR step by which the amount of memory is incremented when \
+needed, up to the limit specified in \fR\fImax\fR, if any; 0 means "fixed \
+size" (no changes allowed, \fR\fImin\fR is used).
+.SH DEBUGGING PROPERTIES
+.TP
+\fBsablevm.verbose.methods\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR outputs names of every method that is to be executed
+.TP
+\fBsablevm.verbose.instructions\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR outputs names of every instruction that is to be executed
+(WARNING: expect flood!!!)
+.TP
+\fBsablevm.verbose.synchronization\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR causes SableVM to dump a stack trace on every locking contention
+and on fat lock acquisition.
+.SH "SEE ALSO"
+java-sablevm(1)
+
+For more informations about
+.B SableVM
+see
+.B http://sablevm.org
+.

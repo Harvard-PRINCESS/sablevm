@@ -1,0 +1,117 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+----------------------------------------------------------------------
+head
+----------------------------------------------------------------------
+
+m4svm_file_name
+m4svm_file_head
+
+----------------------------------------------------------------------
+zeroed allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, type_name
+
+m4svm_cl_zalloc_begin[:
+
+CONSTANT_Class_info, _svmt_CONSTANT_Class_info
+CONSTANT_Double_info, _svmt_CONSTANT_Double_info
+CONSTANT_Fieldref_info, _svmt_CONSTANT_Fieldref_info
+CONSTANT_Float_info, _svmt_CONSTANT_Float_info
+CONSTANT_Integer_info, _svmt_CONSTANT_Integer_info
+CONSTANT_InterfaceMethodref_info, _svmt_CONSTANT_InterfaceMethodref_info
+CONSTANT_Long_info, _svmt_CONSTANT_Long_info
+CONSTANT_Methodref_info, _svmt_CONSTANT_Methodref_info
+CONSTANT_NameAndType_info, _svmt_CONSTANT_NameAndType_info
+CONSTANT_String_info, _svmt_CONSTANT_String_info
+CONSTANT_Utf8_info, _svmt_CONSTANT_Utf8_info
+Code_attribute, _svmt_Code_attribute
+ConstantValue_attribute, _svmt_ConstantValue_attribute
+Deprecated_attribute, _svmt_Deprecated_attribute
+Exceptions_attribute, _svmt_Exceptions_attribute
+InnerClasses_attribute, _svmt_InnerClasses_attribute
+LineNumberTable_attribute, _svmt_LineNumberTable_attribute
+LocalVariableTable_attribute, _svmt_LocalVariableTable_attribute
+SourceFile_attribute, _svmt_SourceFile_attribute
+Synthetic_attribute, _svmt_Synthetic_attribute
+array_info, _svmt_array_info
+class_info, _svmt_class_info
+native_cif, ffi_cif
+native_library, _svmt_native_library
+native_method_data, _svmt_native_method_data
+unknown_attribute, _svmt_unknown_attribute
+
+:]m4svm_cl_zalloc_end
+
+----------------------------------------------------------------------
+multiple-allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, element_type_name
+
+m4svm_cl_malloc_begin[:
+
+attributes, _svmt_attribute_info *
+chars, char
+classes, _svmt_CONSTANT_Class_info **
+constant_pool, _svmt_cp_info *
+inner_classes, _svmt_inner_classes
+native_arg_types, jint
+native_args, ffi_type *
+super_classes, _svmt_class_info *
+u8, _svmt_u8
+code, _svmt_code
+
+:]m4svm_cl_malloc_end
+
+
+m4svm_on(0)
+#if defined (_SABLEVM_TRADITIONAL_OBJECT_LAYOUT)
+m4svm_off()
+
+m4svm_cl_malloc_begin[:
+
+size_t, size_t
+
+:]m4svm_cl_malloc_end
+
+m4svm_on(0)
+#endif /* _SABLEVM_TRADITIONAL_OBJECT_LAYOUT */
+m4svm_off()
+
+
+----------------------------------------------------------------------
+zeroed multiple-allocation
+----------------------------------------------------------------------
+
+Each line has the format:
+
+method_name, element_type_name
+
+m4svm_cl_zmalloc_begin[:
+
+fields, _svmt_field_info
+methods, _svmt_method_info
+exception_table, _svmt_exception_table
+line_number_table, _svmt_line_number_table
+local_variable_table, _svmt_local_variable_table
+super_interfaces, _svmt_u8
+
+:]m4svm_cl_zmalloc_end
+
+----------------------------------------------------------------------
+tail
+----------------------------------------------------------------------
+
+m4svm_file_tail

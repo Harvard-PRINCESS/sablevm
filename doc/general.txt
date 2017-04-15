@@ -1,0 +1,48 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+*** SableVM General Information For Developers ***
+
+Introduction
+------------
+
+This document contains general information about SableVM source code.
+Some information comes directly from the mailing list archives.
+
+Comments and new contributions are welcome.
+
+Send them to: David Belanger <dbelan2@cs.mcgill.ca>
+
+Document History
+----------------
+
+2003-03-19 - Initial draft.
+
+Question and Answers
+--------------------
+
+1. How do I generate the configure script when building from Subversion?
+
+   ./autogen
+
+
+2. What are the meaning of the different prefixes used in SableVM
+   identifiers?
+
+   _svmt_*: type (usually typedef of a struct)
+   _svmv_*: global variable
+   _svmf_*: function
+   _svmm_*: macro
+   _svmh_*: hidden function... A function which should never be called
+            directly by a SableVM programmer, it is instead called
+            through a macro.  (e.g., if you wish to call a _svmh_
+            function, you should find its related _svmm_ macro and call
+            it instead).
+
+
+*** end-of-file ***

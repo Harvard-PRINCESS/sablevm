@@ -1,0 +1,34 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+HANDLING SIGNALS in SableVM (current implementation which is fine):
+  static void
+  _svmf_signal_throw (_svmt_JNIEnv *env, jint signal_code)
+  {
+    assert (env->signal_code == SVM_SIGNAL_NONE);
+    if (env->signal_handler == NULL)
+      {
+        _svmt_JavaVM *vm = env->vm;
+        if (vm->initialization == NULL)
+   {
+     return;  /* delegate the signal */
+   }
+        _svmf_initialization_unrecoverable_exception (env);
+      }
+    env->signal_code = signal_code;
+    siglongjmp (*(env->signal_handler), 1);
+  }
+
+  This is how SableVM gets out of the signal handler.
+  Important to understand: SIGSEGV and other hardware interrupts caused by
+  executing code (e.g. div by zero, access to protected memory, bus
+  misalignment [e.g. trying to store a long with wrong alignment in memory])
+  are delivered to a signal handler on the same execution thread.  This make
+  the longjump() call possible. Those interrupts, if not handled, usually
+  result in the OS killing the application (core dump).
+

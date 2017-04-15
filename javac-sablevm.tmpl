@@ -1,0 +1,30 @@
+#!/bin/sh
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+# * This source file is part of SableVM.                            *
+# *                                                                 *
+# * See the file "LICENSE" for the copyright information and for    *
+# * the terms and conditions for copying, distribution and          *
+# * modification of this source file.                               *
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+JIKES=JIKES_BINARY
+
+if [ ! -x "$JIKES" -o ! -f "$JIKES" ]; then
+  JIKES=`which jikes`
+fi
+
+if [ "X$JIKES" = "X" ]; then
+  echo "Error; unable to find 'jikes' compiler.  Make sure it is installed" >&2
+  echo "and reachable via command 'JIKES_BINARY'." >&2
+  echo "You might also want to check your PATH settings." >&2
+  exit 1
+fi
+
+# this is so that jikes worked w/o problems, i.e. when called by Ant
+BOOTCLASSPATH="SABLEVM_CLASSDIR:SABLEVM_CLASSDIR/libclasspath.jar:SABLEVM_CLASSDIR/resources.jar"
+export BOOTCLASSPATH
+
+exec $JIKES -q "$@"
+
+echo "Error: unable to execute $JIKES." >&2
+exit 1

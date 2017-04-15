@@ -1,0 +1,129 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Q: How do the lockword bits denoting SVM_HASH_NONE, SVM_HASH_NOT_MOVED,
+   SVM_HASH_MOVED work in conjunction with the garbage collector,
+   specifically with env->vm->heap.hashcode_base?
+   
+A: First, you must note that the method Object.hashcode() can be called on
+   any object (or array).  As the hashcode is an "int", a naive implementation
+   of java.lang.Object could look as:
+
+package java.lang;
+
+public class Object
+{
+   private static nextHashcode = 0;
+
+   private final int hashcode = nextHashcode++;
+...
+
+   public int hashcode()
+   {
+     return hashcode;
+   }
+}
+
+Of course, this does not work; synchronization is missing (concurrent object
+creation) and so on, but it illustrates the idea.
+
+In this naive implementation, every object/array instance has a 32 bit field
+for storing its hashcode.  If an application has many small objects on which
+the hashcode() method is *never* called throughout its execution, then the
+space overhead can be relatively big.
+
+In VMs that use non-moving collectors, a simple strategy can be used to eliminate
+the need to use an additional 32 bits per object/array instance: one can simply
+use the object's address as hashcode.  This can have deficiencies in hashcode
+value distribution, specially if the heap is restricted to a small subset of
+memory, but it is usually good enough, and it can save much memory.
+
+This does not work for moving collectors, as the address of objects/arrays change
+throughout their lifetime (hashcode cannot change, of course).  A clever trick
+(got it from IBM researchers) allows one to get away with a two-bit hashcode that
+can be put in the header of an object, thus saving a word for every object
+instance.  Note that I did not use this trick for arrays, as the overhead is
+usually less important.  All arrays need at least: lockword, vtable pointer,
+and length.  Adding hashcode, even to arrays of 0 (!!!) elements is at most 33%
+overhead (instead of 50%), and is very likely to be less (there aren't too many
+situations where arrays of 0 elements are useful).
+
+The two bits indicate one of three states:
+
+SVM_HASH_NONE:      hashcode() was never called on this object.  The object has
+                     no hashcode.
+SVM_HASH_NOT_MOVED: hashcode(0 has been called, and GC has not happened since the
+                     first call.  The object has a hashcode that is not explicitly
+                     stored; it has to be computed.  See below for details.
+SVM_HASH_MOVED:     hashcode() has been called, and GC has happened since, so the
+                     hashcode is explicitly saved at the end of the object.
+
+It works like this:
+1- All arrays are assigned a hashcode at allocation time.  The hashcode is saved in
+    the array header.
+2- Objects are allocated, and 2 bits of the header are reserved for hashcode.  These
+    bits are initialized to SVM_HASH_NONE.  An object has no real hashcode until
+    hashcode() is called on it.  Experiments show that many objects do not ever
+    need a hashcode, so this is good.
+3- When Object.hashcode() is called on an instance, the following algorithm is applied:
+
+    if instance is array
+      return stored hashcode
+
+    // instance is an object
+
+    else if instance.hashcode_state == SVM_HASH_NONE
+      instance.hashcode_state = SVM_HASH_NOT_MOVED
+      return compute_hashcode(instance)
+
+    else if instance.hashcode_state == SVM_HASH_NOT_MOVED
+      return compute_hashcode(instance)
+
+    else // instance.hashcode_state == SVM_HASH_MOVED
+      return stored hashcode (at end of object)
+
+    as for compute_hashcode, it looks like this:
+
+    int compute_hashcode(instance)
+    {
+       int offset = instance.address - start_of_current_heap;
+       return offset + hashcode_base_value;
+    }
+
+     hashcode_base_value is a constant *between* GCs.  It is a virtual
+     base address of a hypothetical contiguous heap.  So, on VM startup,
+     this value is initialized to 0.  After first GC, it is incremented
+     by the size of the discarded "from" space (copying collector).  Same
+     after every GC.  So, it looks like:
+
+     |---HEAP-1---|---HEAP-2---|---HEAP-3---|---
+     ^            ^            ^            ^
+     |            |            |            |
+     |            |            |            \
+     |            |            \             - Value after 3rd GC == size of HEAP-1 + HEAP-2 + HEAP-3
+     |            \             - Value after 2nd GC == size of HEAP-1 + HEAP-2
+     \             - Value after 1st GC == size of HEAP-1
+      - Initial value (0)
+
+     This approach has several advantages:  It makes hashcodes less volatile across
+     executions of the same application (even if malloc() returns different
+     addresses for the heap).  It also ensures a better distribution of hashcode values,
+     as they are given increasing values until the 32-bit values space is exhausted
+     at which point modulo 32-bits applies.
+
+4- When GC happens, a little additional care has to be given to objects when
+    their hashcode state is SVM_HASH_NOT_MOVED or SVM_HASH_MOVED.
+
+    if object.hashcode_state == SVM_HASH_NOT_MOVED
+      we must compute hashcode one last time and store it at the
+      end of the object in the TO space.  We also set the hashcode
+      state of the TO copy to SVM_HASH_MOVED.
+
+    if object.hashcode_state == SVM_HASH_MOVED
+      we must copy a longer object.
+

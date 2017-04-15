@@ -1,0 +1,428 @@
+SableVM release news.
+
+* Version 1.13
+==============
+- Updated the class library to the GNU Classpath 0.19 release.
+- Fixed internal libffi on ia64.
+- Fixed possible interpeter crashes on ia64.
+- Other small bugfixes.
+
+* Version 1.12
+==============
+
+- Added libffi and libpopt to the sources (system-wide installations
+  are used if found).
+- Fixed write barriers for generational garbage collector.
+- Imported GNU Classpath 0.16 release (plus later fixes).
+- Disabled inlined engine on alpha.
+- Added jar-sablevm wrapper for fastjar.
+- Fixed NaN -> int conversion.
+- Ensured inlined engine works even when user sets CFLAGS for
+  compilation.
+- Improved AIX support.
+- Improved Cygwin support (but not in SableVM SDK).
+- Fixed some bugs.
+
+
+* Version 1.11
+==============
+
+- Fixed many important bugs of version 1.1.10.
+- Imported GNU Classpath CVS snapshot as of March 12, 2005.
+- Added debugging traces on assertion failures in stop/resume java
+  transitions, and fixed revealed bugs.
+- Added assertions to check that the env pointer is valid in JNI
+  calls.
+- Implemented non-blocking locking, and used it to solve a hashcode
+  bug.
+- Solved many subtle bugs resulting in incompletely initialized
+  threads and stack corruption.
+- Cleaned up suspend/resume code.
+- Fixed various other minor bugs.
+- Added javac-sablevm wrapper for jikes and javac in java home dirs.
+- Added creation of rt.jar symlink to libclasspath.jar.
+- Transformed the staging development branch into the development
+  trunk, and used new release numbering scheme.
+
+
+* Version 1.1.10
+================
+
+- Imported the code of GNU Classpath 0.14.
+- Implemented most of the missing JNI 1.2 functions.
+- Implemented the new JNI 1.4 nio related functions.
+- Added svnclean target to makefile.
+- Added the m4svm_parse_attribute_elseifexternal macro to handle
+  attributes with full package prefixes.
+- Fixed the java-sablevm wrapper to better handle LD_LIBRARY_PATH,
+  -Djava.library.path and CLASSPATH setting.
+- Disabled the timezone setting in java-sablevm wrapper - classpath
+  should now do it on its own.
+- Fixed Object.wait() when timeout is specified.  This fixes Ant pauses.
+- Changed _svmm_fatal_error() to actually print the function name,
+  when possible.
+- Added thread IDs to verbose instruction output
+- Implemented Java_java_lang_VMRuntime_[free|total|max]Memory().
+- Implemented basic JDK home support.
+- Fixed various bugs.
+
+
+* Version 1.1.9
+===============
+
+- Added the necessary support to run both Eclipse 2 and Eclipse 3
+  without using external libraries.  Instructions are available
+  at http://sablevm.org/wiki/Eclipse .
+- Merged code from GNU Classpath 0.13 release.
+- Improved error messages related to exceptions at bootstrap (ie.
+  binding to non-existant native methods).
+- Implemented some missing JNI functions.
+- Added some missing system-dependant Java properties.
+- Enabled "real life brokenness" option by default to better handle
+  native code not adhering to the Java specs.
+- Improved cross-compiliation support. 
+- Updated manual pages.
+
+
+* Version 1.1.8
+===============
+
+- Added the necessary support to run both Eclipse 2 and Eclipse 3
+  (using the xerces and xalan libraries).  Instructions are available
+  at http://sablevm.org/wiki/Eclipse .
+- Added -Xgnuclasspath:/dir/ectory option to java-sablevm
+  wrapper. This allows for running SableVM with an unmodified GNU
+  Classpath out-of-the-box using an override .jar provided daily at
+  http://sablevm.org/download/snapshot/ .
+- Imported a new GNU Classpath CVS snapshot as of December 28, 2004.
+- Implemented some missing JNI functions needed by qt/java.
+- Set BOOTCLASSPATH in java-sablevm to help jikes find our libs.
+- Wrapped the exception thrown by a constructor or a method invoked
+  through reflection in an InvocationTargetException instance.
+- Added ProtectionDomain handling for classes loaded via
+  j.l.ClassLoader.
+- Started to use URLClassLoader instead of gnu.j.l.SystemClassLoader,
+  which apparently was used by us exclusively.
+- Added sablevm.verbose.exit bootstrap property to dump stack trace on
+  System.exit().
+- Added sablevm.verbose.exceptions bootstrap property to dump stack
+  trace on every thrown exception.
+- Enabled GCC unused and long-long warnings, then fixed tons of
+  warnings.
+- Implemented [Get|Release]PrimitiveArrayCritical.
+- Solved a class loading related deadlock.
+- Fixed a VMThread.sleep bug.
+- Passed the class name as a parameter to LinkageError and
+  ClassCircularityError in java.lang.ClassLoader.
+- Added function name as message to UnsatisfiedLinkError for missing
+  native functions.
+- Implemented various other improvements.
+- Fixed various other bugs.
+
+
+* Version 1.1.7
+===============
+
+- Imported new GNU Classpath CVS snapshot as of Sun Oct 10 18:00:00
+  UTC 2004.
+- Added handling of Jar/Zip files on boot classpath (closes BUG:2).
+- Provided user-friendly failure messages for bootstrap problems.  This
+  should get rid of the hated "sablevm: cannot create vm".
+- Allowed for multiple elements and prepending/appending to boot class
+  path.
+- Added --with-profiling switch to make most functions non-"static".
+- Made sablevm-classpath install its files in more standard locations.
+- Explicitely disallowed compilation of classpath with gcj or kjc (it
+  never worked reliably).
+- Made jikes and gcc be less verbose by default (to avoid confusion).
+- Removed some obsolete code from various places.
+- Added new Generational Garbage Collector ("experimental", available on
+  request, by passing --with-gc=gencopy to configure).
+- Made several bugfixes of:
+  - JNI methods not returning NULL on errors (closes BUG:12).
+  - IsInstanceOf always returning JNI_FALSE (closes BUG:63).
+  - A copy&paste mistake in PopLocalFrame (closes BUG:62).
+  - Several JNI methods not returning NULL on errors (closes BUG:12).
+  - IsInstanceOf always returning JNI_FALSE (closes BUG:63).
+  - "New array" memory allocation size overflow (closes BUG:8).
+  - Out-of-source builds (closes BUG:55).
+  - Handling of 'double' values on ARM.
+  - FPU in 64-bit precision mode on Linux / Intel x86 (closes BUG:1).
+  - F2L, F2I, D2L, D2I not checking for overflows (closes BUG:54).
+  - SIGPIPE killing the VM (closes BUG:51).
+  - GNU make detection on non-GNU/Linux platforms.
+  - Case-insensitive grepping for "Main-Class:" string in MANIFEST.MF.
+
+
+* Version 1.1.6
+===============
+
+- Synchronized sablevm-classpath with the latest GNU Classpath CVS
+  (post 0.10 release) as of July 10, 2004.
+
+- Improved AWT and Swing support.
+
+- Added additional checks to autogen.sh for FreeBSD.
+
+- Added new DecoderUS_ASCII, Spring and SpringLayout classes.
+
+- Added a sablevm.verbose.synchronization (DEBUG) option to help
+  debugging deadlocks.
+
+- Improved TimeZone handling.
+
+- Added detection of non-GNU-compatible "make" to issue warnings and
+  errors appropriately.
+
+- Added useful additional information in stack dumps.
+
+- Added new documentation.
+
+- Fixed various bugs.
+
+
+* Version 1.1.5
+===============
+
+- Synchronized sablevm-classpath with the latest GNU Classpath CVS
+  as of May 29, 2004.
+
+- Improved the support for Ant 1.6.
+
+- Switched to libtool handling to find the right library suffixes.
+  This helps some platforms like OpenBSD and Cygwin.
+
+- Fixed a corner case problem with class loading.
+
+- Made some other small bug fixes.
+
+
+* Version 1.1.4
+===============
+
+- Updated sablevm-classpath with the recent GNU Classpath 0.09 release
+  and later GNU Classpath CVS changes as of May 4, 2004.
+
+- Improved support for AWT and Swing.
+
+- Eliminated the dependency lt_dlopen(NULL) which seem broken on some
+  platforms such as Cygwin and some *BSD.
+
+- Switched to new, complete implementation of VMProcess/Process from
+  GNU Classpath instead of using our own previous partial
+  implementation.
+
+- Added x86_64 (AMD64) support to the already supported 8 other
+  architectures of Debian GNU/Linux (alpha, hppa, i386, ia64, m68k,
+  powerpc, s390, sparc).  The support for the remaining mips and
+  mipsel architectures of Debian is apparently implemented but it has
+  not yet been confirmed.
+
+- Improved autodetection of build parameters on non-GNU/Linux systems.
+  This includes selection of dynamic libraries, availability of m4
+  preprocessor and auto-disabling "signals for exceptions" on
+  platforms that don't seem to support signals.
+
+- Made sure that the m4 preprocessor will not be needed to build from
+  sablevm-*.tar.gz distribution files.  m4 is only required to build
+  directly from a snapshot of the Subversion repository.
+
+- Updated and improved manual pages.
+
+- Made some other little improvements and applied a few bug fixes.
+
+
+* Version 1.1.3
+===============
+
+- Cleaned up build process so that "./configure ; make ; make install"
+  works out of the box for both sablevm-classpath (as it does for
+  sablevm).
+
+
+* Version 1.1.2
+===============
+
+- Uses GNU Classpath 0.08+CVS.
+
+- Various minor bugfixes and enhancements.
+
+
+* Version 1.1.1
+===============
+
+- Works now with GNU Classpath 0.08.
+
+- Implemented Thread.interrupt() and related methods.
+
+- Other small bugfixes and improvements.
+
+
+* Version 1.1.0
+===============
+
+- SableVM now uses a much newer version of GNU Classpath.
+
+- many bug fixes, and feature enhancements (such as semi-automatic
+  inlinability customization).
+
+
+* Version 1.0.9
+===============
+
+- Port to various Debian architectures.
+
+- Port to Mac OS X.
+
+- Bug fixes.
+
+
+* Version 1.0.8
+===============
+
+- Bug fixes.
+
+
+* Version 1.0.7
+===============
+
+- Port inline-threaded engine to ia64 and alpha.
+
+- Get SableVM to execute classes compiled using Jikes 1.18.
+
+- Minor bug fixes.
+
+
+* Version 1.0.6
+===============
+
+- Port to PowerPC
+
+- Add more reflection hooks.
+
+
+* Version 1.0.5
+===============
+
+- Port to ia64.
+
+- Minor bug fixes.
+
+
+* Version 1.0.4
+===============
+
+- Work around the libffi header bug by defining new configure macros.
+
+- Implement _svmf_iflush() for processors with distinct data and
+  instruction caches.
+
+- Minor bug fixes.
+
+
+* Version 1.0.3
+===============
+
+- Fixed configure.ac to select an inline-threaded interpreter engine
+  by default on i*86.  The 1.0.2 version was erroneously defaulting to
+  a slower direct-threaded engine.
+
+- Collect some additional interesting statistics (when STATISTICS is
+  defined in configure.ac, of course).
+
+
+* Version 1.0.2
+===============
+
+- SableVM is ported to the Alpha 64 bits architecture, thanks to the
+  effort of Grzegorz Prokopski <gadek@debian.org>.  It took him 24
+  hours, and the "diff" size was 25 lines. :-)  What port is next?
+
+- Some of the few holes left in JNI and in reflection native code have
+  been filled.
+
+
+* Version 1.0.1
+===============
+
+- SableVM now waits until all non-daemon threads are died before
+  quitting.
+
+- SableVM is now known to run all SPECjvm98 benchmarks, SableCC
+  2.17.3, and Soot 1.2.3.
+
+- Convenient build scripts have been added.
+
+
+* Version 1.0.0
+===============
+
+- Threaded interpreter engine in three flavors:
+  - inline threaded (Requires GNU C)
+  - direct threaded (Requires GNU C)
+  - switch threaded (pure ISO C + POSIX)
+
+- Two-word object header. ("java.lang.Object" instances are 2 words
+  long, including the hashcode, the lock, the vtable, and additional
+  bits).
+
+- Two flavors of object layout: bidirectional and traditional.
+
+- The bidirectional object layout allows for tracing an object, at GC
+  time, without accessing any data outside the object (vtable, type
+  structure), in most cases.  Best effort has been made in the
+  traditional layout to minimize external access.
+
+- Precise stop-the-world copying garbage collector. Heap parameters
+  are specifiable on the command-line (properties).
+
+- Stop-the-world uses regular non-atomic check operations (except around
+  native calls).  Threads running native code are considered "stopped"
+  from the VM's point of view.
+
+- Minimization of regular checks by only applying them on back jumps
+  to basic blocks that do not include operations like "new", and
+  "invoke*", which already contain a check.
+
+- Efficient locals map data-flow analysis which works in presence of
+  arbitrarily complex jsr / exception mix.
+
+- Space efficient stack and local GC maps.
+
+- Constant time access to the current stack and local GC map for every
+  frame on the Java stack.
+
+- Grow-on-need Java stack size, with command-line (properties)
+  specifiable parameters.
+
+- Grow-on-need class-loader memory management, with command-line
+  (properties) specifiable parameters.
+
+- "invokeinterface" at the speed of "invokevirtual", using sparse
+  interface vtables without memory loss. Holes in the vtables are
+  recycled on a class-loader basis for storing other data.
+
+- Thin locks without spin-locking in case of contention.
+
+- A choice of explicit or signal based null checks. Signal based
+  checks cost 0 processor cycles on success, but can be expensive in
+  case of exceptions. Also, signal based check increase the cost of
+  native->Java method invocation (the cost of a "siglongjmp").
+
+- Java based "application class loader" (or system class loader),
+  which allows for putting .jar files on the classpath.
+
+- Support for Runtime.traceInstructions/traceMethodCalls in the
+  debugging version of the interpreter.
+
+- Easily readable/debuggable code, using explicitly generated
+  commented source files for repetitive code.  This is done using a
+  set of simple-to-use m4 macros that can be conveniently hidden in C
+  code (allowing automatic tools like "indent" to work). No need to
+  understand m4 for reading the VM's source code (except if you want
+  to look at .m4[.*] files, which is not necessary).
+
+- Licensed under the terms of the GNU Lesser General Public License
+  (LGPL).
+
+- And more, for your pleasure!

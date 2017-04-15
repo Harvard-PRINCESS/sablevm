@@ -1,0 +1,476 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+This file contains Java bytecodes inlineability information for each
+architercture. 
+
+----------------------------------------------------------------------
+Supported architectures
+----------------------------------------------------------------------
+
+We first define the list of supported architecture. To support a new
+architecture, simply add its name at the end of the list m4_svm_arches
+so that the first char of the name was starting in the same column as
+the inlineability informations for the architecture of that name.
+To easily add an empty column you can use the addarch.pl utility.
+
+
+m4svm_arches(       i386-gcc-2.95,
+                         i386-gcc-3.3,
+                              i386-gcc-3.3-fp,
+                                   ia64,
+				        alpha,
+				             sparc,
+					          arm,
+                                                       m68k,						       
+						            powerpc-no-reorder,
+						                 s390,
+								      powerpc,
+								           hppa,
+                                                                                x86_64)
+
+
+----------------------------------------------------------------------
+Inlinability of instructions
+----------------------------------------------------------------------
+
+We now list inlinability information for each instruction. The first
+column contains instruction names, subsequent columns contain inlinability
+information for each architecture in the order defined by the list
+of architectures above.
+
+If the entry is empty for an instruction on a certain architecture, the
+instruction is considered inlinable.  This is intended to:
+(1) ease the visual identification of non-inlinable instructions, and
+(2) reduce the amount of typing.  Human nature can be lazy. :-)
+
+To bring the above ideas even further - there is also a list of instructions
+that are never inlineable put after the first one.
+
+List of non-inlinable tags:
+
+NOT - CONTAINS_BRANCH_OR_CALL
+SIG - INLINEABLE_IF_SIGNALS
+SPC - SPECIAL
+NSD - UNUSED
+
+
+m4svm_file_name
+
+m4svm_arches_inlineability_begin[:
+
+NOP                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ACONST_NULL        ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ICONST_M1          ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_4           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ICONST_5           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+LCONST_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LCONST_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FCONST_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FCONST_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FCONST_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DCONST_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DCONST_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+LDC_INTEGER        ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LDC_FLOAT          ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LDC_STRING         ,    ,    ,    ,    , NOT,    ,    ,    ,    , NOT,    ,    ,    ,
+LDC_LONG           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LDC_DOUBLE         ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ILOAD              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LLOAD              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FLOAD              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DLOAD              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ILOAD_0            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ILOAD_1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ILOAD_2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ILOAD_3            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+LLOAD_0            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LLOAD_1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LLOAD_2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LLOAD_3            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+FLOAD_0            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FLOAD_1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FLOAD_2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FLOAD_3            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+DLOAD_0            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DLOAD_1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DLOAD_2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DLOAD_3            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+LALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+FALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+DALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+CALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+SALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+
+ALOAD              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ALOAD_0            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ALOAD_1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ALOAD_2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ALOAD_3            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+AALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+
+ISTORE             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSTORE             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FSTORE             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DSTORE             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ISTORE_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ISTORE_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ISTORE_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ISTORE_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+LSTORE_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSTORE_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSTORE_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSTORE_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+FSTORE_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FSTORE_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FSTORE_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FSTORE_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+DSTORE_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DSTORE_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DSTORE_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DSTORE_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ASTORE_0           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_1           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_2           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_3           ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+LASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+FASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+DASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+CASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+SASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    , NOT,    ,    ,    ,
+
+POP                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+POP2               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP_X1             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP_X2             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP2               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP2_X1            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DUP2_X2            ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+SWAP               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IADD               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LADD               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FADD               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DADD               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ISUB               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSUB               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FSUB               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DSUB               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IMUL               ,    ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,
+LMUL               ,    ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,
+FMUL               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DMUL               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+FDIV               ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DDIV               ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+INEG               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LNEG               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FNEG               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DNEG               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IAND               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LAND               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+IOR                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LOR                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+IXOR               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LXOR               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+I2L                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+I2F                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+I2D                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+L2I                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+L2F                ,    ,    ,    ,    ,    , NOT,    , NOT, NOT, NOT,    ,    ,    ,
+L2D                ,    ,    ,    ,    ,    , NOT,    , NOT, NOT, NOT,    ,    ,    ,
+
+F2D                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+D2F                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+I2B                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+I2C                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+I2S                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+IDIV               , SIG,    ,    , NOT,    , NOT,    ,    ,    ,    ,    ,    ,    ,
+LDIV               , NOT, NOT,    , NOT,    , NOT,    , NOT, NOT, NOT,    ,    ,    ,
+IREM               , SIG,    ,    , NOT,    , NOT,    ,    ,    ,    ,    ,    ,    ,
+LREM               , NOT, NOT,    , NOT,    , NOT,    , NOT, NOT, NOT,    ,    ,    ,
+FREM               , NOT,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+DREM               , NOT,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ISHL               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSHL               ,    ,    ,    ,    ,    , NOT,    , NOT, NOT,    ,    ,    ,    ,
+ISHR               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LSHR               ,    ,    ,    ,    ,    , NOT,    , NOT, NOT,    ,    ,    ,    ,
+IUSHR              ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+LUSHR              ,    ,    ,    ,    ,    , NOT,    , NOT, NOT,    ,    ,    ,    ,
+
+LCMP               , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FCMPL              , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+FCMPG              , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DCMPL              , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+DCMPG              , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+IINC               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+GOTO               ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+JSR                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+RET                ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ARRAYLENGTH        , SIG,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ATHROW             ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+GETFIELD_BYTE      , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_SHORT     , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_CHAR      , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_INT       , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_LONG      , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_FLOAT     , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_DOUBLE    , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+GETFIELD_REFERENCE , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+
+PUTFIELD_BYTE      , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_SHORT     , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_CHAR      , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_INT       , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_LONG      , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_FLOAT     , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_DOUBLE    , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_REFERENCE , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+
+GETSTATIC_BOOLEAN  ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_BYTE     ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_SHORT    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_CHAR     ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_INT      ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_LONG     ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_FLOAT    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_DOUBLE   ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+PUTSTATIC_BOOLEAN  ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_BYTE     ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_SHORT    ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_CHAR     ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_INT      ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_LONG     ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_FLOAT    ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_DOUBLE   ,    ,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+
+GETFIELD_BOOLEAN   , SIG,    ,    ,    , SIG,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTFIELD_BOOLEAN   , SIG,    ,    ,    , NOT,    ,    ,    ,    ,    ,    ,    ,    ,
+GETSTATIC_REFERENCE,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+PUTSTATIC_REFERENCE,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_RET         ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+ASTORE_RET_0       ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_RET_1       ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_RET_2       ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+ASTORE_RET_3       ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+BALOAD             , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+BASTORE            , NOT,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,    ,
+
+:]m4svm_arches_inlineability_end
+
+----------------------------------------------------------------------
+Never inlineable instructions
+----------------------------------------------------------------------
+
+m4svm_never_inlineable_begin[:
+
+F2I                        , NOT
+F2L                        , NOT
+D2I                        , NOT
+D2L                        , NOT
+
+AASTORE                    , NOT
+
+IFEQ                       , NOT
+IFNE                       , NOT
+IFLT                       , NOT
+IFLE                       , NOT
+IFGT                       , NOT
+IFGE                       , NOT
+
+IF_ICMPEQ                  , NOT
+IF_ICMPNE                  , NOT
+IF_ICMPLT                  , NOT
+IF_ICMPLE                  , NOT
+IF_ICMPGT                  , NOT
+IF_ICMPGE                  , NOT
+
+IF_ACMPEQ                  , NOT
+IF_ACMPNE                  , NOT
+
+IFNULL                     , NOT
+IFNONNULL                  , NOT
+
+IF_ICMPEQ_CHECK            , NOT
+IF_ICMPNE_CHECK            , NOT
+IF_ICMPLT_CHECK            , NOT
+IF_ICMPLE_CHECK            , NOT
+IF_ICMPGT_CHECK            , NOT
+IF_ICMPGE_CHECK            , NOT
+
+IFEQ_CHECK                 , NOT
+IFNE_CHECK                 , NOT
+IFLT_CHECK                 , NOT
+IFLE_CHECK                 , NOT
+IFGT_CHECK                 , NOT
+IFGE_CHECK                 , NOT
+
+IF_ACMPEQ_CHECK            , NOT
+IF_ACMPNE_CHECK            , NOT
+
+IFNULL_CHECK               , NOT
+IFNONNULL_CHECK            , NOT
+
+TABLESWITCH                , NOT
+LOOKUPSWITCH               , NOT
+
+
+CHECKCAST                  , NOT
+INSTANCEOF                 , NOT
+MONITORENTER               , NOT
+MONITOREXIT                , NOT
+
+IRETURN                    , NOT
+LRETURN                    , NOT
+FRETURN                    , NOT
+DRETURN                    , NOT
+ARETURN                    , NOT
+RETURN                     , NOT
+
+NEW                        , NOT
+NEWARRAY_BOOLEAN           , NOT
+NEWARRAY_BYTE              , NOT
+NEWARRAY_SHORT             , NOT
+NEWARRAY_CHAR              , NOT
+NEWARRAY_INT               , NOT
+NEWARRAY_LONG              , NOT
+NEWARRAY_FLOAT             , NOT
+NEWARRAY_DOUBLE            , NOT
+ANEWARRAY                  , NOT
+MULTIANEWARRAY             , NOT
+
+GOTO_CHECK                 , NOT
+JSR_CHECK                  , NOT
+TABLESWITCH_CHECK          , NOT
+LOOKUPSWITCH_CHECK         , NOT
+
+INVOKEVIRTUAL              , NOT
+INVOKESPECIAL              , NOT
+INVOKESTATIC               , NOT
+INVOKEINTERFACE            , NOT
+
+LINK_NATIVE_METHOD         , SPC
+ABSTRACT_METHOD            , SPC
+NATIVE_STATIC_METHOD       , SPC
+NATIVE_NONSTATIC_METHOD    , SPC
+
+NEXT                       , SPC
+ERROR                      , SPC
+INTERNAL_CALL_END          , SPC
+SKIP                       , SPC
+REPLACE                    , SPC
+
+PREPARE_METHOD             , SPC
+PREPARE_LDC_STRING         , SPC
+
+PREPARE_GETFIELD_BOOLEAN   , SPC
+PREPARE_GETFIELD_BYTE      , SPC
+PREPARE_GETFIELD_SHORT     , SPC
+PREPARE_GETFIELD_CHAR      , SPC
+PREPARE_GETFIELD_INT       , SPC
+PREPARE_GETFIELD_LONG      , SPC
+PREPARE_GETFIELD_FLOAT     , SPC
+PREPARE_GETFIELD_DOUBLE    , SPC
+PREPARE_GETFIELD_REFERENCE , SPC
+
+PREPARE_PUTFIELD_BOOLEAN   , SPC
+PREPARE_PUTFIELD_BYTE      , SPC
+PREPARE_PUTFIELD_SHORT     , SPC
+PREPARE_PUTFIELD_CHAR      , SPC
+PREPARE_PUTFIELD_INT       , SPC
+PREPARE_PUTFIELD_LONG      , SPC
+PREPARE_PUTFIELD_FLOAT     , SPC
+PREPARE_PUTFIELD_DOUBLE    , SPC
+PREPARE_PUTFIELD_REFERENCE , SPC
+
+PREPARE_GETSTATIC_BOOLEAN  , SPC
+PREPARE_GETSTATIC_BYTE     , SPC
+PREPARE_GETSTATIC_SHORT    , SPC
+PREPARE_GETSTATIC_CHAR     , SPC
+PREPARE_GETSTATIC_INT      , SPC
+PREPARE_GETSTATIC_LONG     , SPC
+PREPARE_GETSTATIC_FLOAT    , SPC
+PREPARE_GETSTATIC_DOUBLE   , SPC
+PREPARE_GETSTATIC_REFERENCE, SPC
+
+PREPARE_PUTSTATIC_BOOLEAN  , SPC
+PREPARE_PUTSTATIC_BYTE     , SPC
+PREPARE_PUTSTATIC_SHORT    , SPC
+PREPARE_PUTSTATIC_CHAR     , SPC
+PREPARE_PUTSTATIC_INT      , SPC
+PREPARE_PUTSTATIC_LONG     , SPC
+PREPARE_PUTSTATIC_FLOAT    , SPC
+PREPARE_PUTSTATIC_DOUBLE   , SPC
+PREPARE_PUTSTATIC_REFERENCE, SPC
+
+PREPARE_CHECKCAST          , SPC
+PREPARE_INSTANCEOF         , SPC
+PREPARE_NEW                , SPC
+PREPARE_ANEWARRAY          , SPC
+PREPARE_MULTIANEWARRAY     , SPC
+PREPARE_INVOKEVIRTUAL      , SPC
+PREPARE_INVOKESPECIAL      , SPC
+PREPARE_INVOKESTATIC       , SPC
+PREPARE_INVOKEINTERFACE    , SPC
+
+BIPUSH                     , NSD
+SIPUSH                     , NSD
+LDC                        , NSD
+LDC_W                      , NSD
+LDC2_W                     , NSD
+GETSTATIC                  , NSD
+PUTSTATIC                  , NSD
+GETFIELD                   , NSD
+PUTFIELD                   , NSD
+NEWARRAY                   , NSD
+WIDE                       , NSD
+GOTO_W                     , NSD
+JSR_W                      , NSD
+
+:]m4svm_never_inlineable_end
+
+m4svm_inlinability_data_name

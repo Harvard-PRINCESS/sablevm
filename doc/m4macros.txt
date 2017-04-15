@@ -1,0 +1,156 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * This source file is part of SableVM.                            *
+ *                                                                 *
+ * See the file "LICENSE" for the copyright information and for    *
+ * the terms and conditions for copying, distribution and          *
+ * modification of this source file.                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+m4 macros in SableVM
+====================
+
+SableVM provides a set of powerful m4 macros.  This document describes
+their usage, problems that may occur, and walks through the
+complexities of instructions_preparation.m4.c.  More documentation can
+be found in ./src/libsablevm/macros.m4
+
+Mixed C and m4 files
+====================
+
+Oftentimes it may be convenient to have m4 macros inside certain
+portions of a C file.  Here is an easy way to convert from .c/.h to
+.m4.c/.m4.h
+
+If you change a file like this, you need to change Makefile.am to
+build it properly.  This is relatively easy, and there are many
+examples to follow.  You should also use 
+
+  'svn mv <filename>.c <filename>.m4.c' 
+
+so that the file keeps sandbox history.  Then, make sure the file
+follows this format, defining macros wherever you need them:
+
+/* m4svm_file_name */      <---- 1st line of file
+/* m4svm_on(0)m4_dnl */
+
+  << ordinary C code >>
+
+/* some comment *[::]/
+   m4svm_off ();
+*/
+
+m4svm_define_begin v = ":], [:m4svm_macro_name:])";
+
+  << C macro body here >>
+
+m4svm_define_end v = ":])";
+/* m4svm_macro_name(arg1,arg2,...,argN)
+   m4_undefine([:m4svm_macro_name:])
+   m4svm_on(0)m4_dnl */
+
+  << more ordinary C code >>
+
+EOF
+
+C comments with commas inside macro bodies
+==========================================
+
+If you have C comments in a macro body, you cannot put a `,' inside
+them.  Rather, you must quote them using the redefined quote tokens, like so:
+
+[:,:]
+
+Usually it's easier just to write the C comments without commas in the
+first place.
+
+Mismatched C parentheses in a macro body
+========================================
+
+If for some reason you have mismatched parentheses in a macro body,
+this will confuse m4 even if the mismatch is only relevant to the
+generated C code.  You might think it is an m4 bug when really it's
+the C code that's at fault.
+
+Maximum macro body length
+=========================
+
+At some point, while writing a long instruction in instructions.m4.c,
+I came across a maximum where m4 would no longer recognize the
+m4svm_instruction_tail() macro properly.  If you have really long
+macro bodies (500+ lines), and are getting confusing m4 errors, try
+cutting down the size of the macro body.
+
+Details on instructions_preparation.m4.c
+========================================
+
+Here we'll cover m4svm_instruction_1, m4svm_instruction_2$1, and the
+rest of the stuff in ./src/libsablevm/instructions_preparation.m4.c
+
+The problem is that GNU indent puts a space between the function and
+the left parenthesis, e.g. 'foo (arg1, arg2);'.  Unfortunately m4 does
+not allow for a space between the parenthesis and the macro name.  So,
+we have to play tricks. :-)  Let's do it in steps.
+
+STEP 1.
+
+  m4svm_instruction_head (NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+
+expands to:
+ 
+  m4svm_instruction_1( (NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+    << instruction body in C >>
+  m4svm_instruction_tail ();
+
+Now, 
+
+  m4svm_instruction_tail 
+
+expands to:
+  
+  ))m4_dnl ();
+  
+This whole thing (after applying m4_dnl) becomes:
+  
+  m4svm_instruction_1( (NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+    << instruction body in C >>
+  ))
+
+STEP 2.
+ 
+The above result becomes a call to m4svm_instruction_1 with a single
+parameter [delimited by parentheses].  The argument is:
+
+  (NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+    << instruction body in C >>
+  )
+
+STEP 3.
+  
+m4svm_instruction_1 is expanded and we get:  
+
+  m4svm_instruction_2(NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+
+Which ends with a ";", and it does not include the instruction body.
+So, we must expand m4svm_instruction_2.
+
+STEP 4.
+  
+  m4svm_instruction_2(NOP, SVM_INTRP_FLAG_INLINEABLE, 0);
+
+expands to:
+
+  m4svm_instruction($1, $2, $3,m4_dnl
+
+or, more precisely:
+
+  m4svm_instruction(NOP, SVM_INTRP_FLAG_INLINEABLE, 0,m4_dnl;
+
+So, after applying m4_dnl, the whole thing now looks as:
+  
+  m4svm_instruction(NOP, SVM_INTRP_FLAG_INLINEABLE, 0,
+    << instruction body in C >>
+  )
+
+Which also gets rid of the ";" at the end of the
+m4svm_instruction_head line.  Now m4svm_instruction has all the
+params that we wanted it to have.

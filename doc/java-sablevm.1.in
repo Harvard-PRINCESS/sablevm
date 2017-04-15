@@ -1,0 +1,119 @@
+./ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+./ * This source file is part of SableVM.                            *
+./ *                                                                 *
+./ * See the file "LICENSE" for the copyright information and for    *
+./ * the terms and conditions for copying, distribution and          *
+./ * modification of this source file.                               *
+./ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.TH SABLEVM "1" "January 2005" "SableVM version @RELEASE@" "User Commands"
+.SH NAME
+Manual page of 'java' wrapper for SableVM - free (LGPL) Java virtual machine
+.SH SYNOPSIS
+.B java-sablevm
+[\fIOPTION\fR]... \fICLASSNAME \fR[\fIARGUMENT\fR]...
+.SH DESCRIPTION
+.TP
+\fB[\-]\-addclasspath ADDEDCLASSPATH\fR
+appends ADDEDCLASSPATH at the end of CLASSPATH (note that parameters' order is important!)
+.TP
+\fB[\-]\-cp CLASSPATH\fR, \fB[\-]\-classpath CLASSPATH\fR, \fB[\-]\-classpath=CLASSPATH\fR
+set CLASSPATH for program to be run (overrides value of CLASSPATH environment variable)
+.TP
+\fB\-DPROPERTY=VALUE\fR
+set PROPERTY value to VALUE
+.TP
+\fB\-h\fR, \fB[\-]\-help\fR, \fB\-?\fR
+show help (not implemented yet, see manual page)
+.TP
+\fB\-jar FILE\fR
+execute content of FILE as a jar type file (requires unzip utility installed); note
+that you can't specify CLASSNAME in this case
+.TP
+\fB[\-]\-showversion\fR
+show version (like -V) and continue execution
+.TP
+\fB-v\fR, \fB[\-]-verbose\fR
+enable all verbose options (might *flood* you if SableVM is compiled with debugging
+options)
+.TP
+\fB[\-]\-verbose\-gc\fR
+enable verbose garbage collection
+.TP
+\fB[\-]\-verbose[:]jni\fR
+enable verbose Java Native Interface
+.TP
+\fB\-V\fR, \fB[\-]\-version\fR
+show version information, including some compilation options
+.TP
+\fB\-Xbootclasspath:/pa/th\fR, \fB-Xbootclasspath/p:/pa/th\fR, \fB-Xbootclasspath/a:/pa/th\fR
+set the value of the boot classpath, prepend or append a value to it
+.TP
+\fB\-Xgnuclasspath:/dir/ectory\fR
+sets the location of GNU Classpath libraries (not sablevm-classpath); 
+\fINOTE:\fR due to ever-changing nature of VM <-> Classpath interfaces
+you might need to use the latest SableVM snapshot if you want to run
+the latest GNU Classpath CVS directly with SableVM;  This option is
+meant mainly for Java Virtual Machine and GNU Classpath developers
+and advanced users.
+.TP
+\fB\-\-\fR
+end of options marker - CLASSNAME (if any) and ARGUMENTS (if any) should follow
+.SH RECOGNIZED ENVIRONMENTAL VARIABLES
+.TP
+\fBCLASSPATH\fR
+used as the classpath for the program being started, unless -cp was specified
+.TP
+\fBLD_LIBRARY_PATH\fR
+used to search for location of native java libraries, \fIincompatible\fR
+with setting java.library.path property
+.SH OPTIONS IGNORED
+.TP
+\fB[\-]\-debug\fR, \fB\-Xdebug\fR, (extended debug options)
+.TP
+\fB\-ss VALUE\fR, (maximal stack size)
+.TP
+\fB\-ms VALUE\fR, (initial heap size)
+.TP
+\fB\-ms VALUE\fR, (maximum heap size)
+.TP
+\fB\-X[...]\fR, (other extended option)
+.TP
+\fB\-noverify\fR, (turn off bytecode verifier)
+.TP
+\fB\-verbosemem\fR, (verbose memory allocation)
+.TP
+\fB\-verbosegc\fR, (verbose memory allocation)
+.TP
+\fB\-verbosejit\fR, (verbose memory allocation)
+.TP
+\fB\-verbose[...]\fR, (other verbose option)
+.TP
+\fB\-vmdebug opt1[,opt2...]\fR, (other debug option)
+All the above options are recognized by \fIjava-sablevm\fR wrapper and \fIignored\fR. Their
+handling is either not implemented by the wrapper or by sablevm binary (and
+thus they can not be translated to options sablevm is able to recognize).
+.SH DEBUGGING PROPERTIES
+The below properties are only usable when SableVM was compiled with
+--enable-debugging-features, which is not the case ie. for binary distributions.
+.TP
+\fBsablevm.verbose.methods\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR outputs names of every method that is to be executed
+.TP
+\fBsablevm.verbose.instructions\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR outputs names of every instruction that is to be executed
+(WARNING: expect flood!!!)
+.TP
+\fBsablevm.verbose.synchronization\fR
+when operating on a binary compiled with debugging features - setting this property
+to \fR\fItrue\fR causes SableVM to dump a stack trace on every locking contention
+and on fat lock acquisition.
+.SH "SEE ALSO"
+sablevm(1)
+
+For more informations about
+.B SableVM
+see
+.B http://sablevm.org
+.
